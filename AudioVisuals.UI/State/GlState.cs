@@ -120,9 +120,9 @@ namespace AudioVisuals.UI
             float distanceToTargetY = _cameraLookAtTarget.Y - Instance.CameraInfo.EyeY;
             float distanceToTargetZ = _cameraLookAtTarget.Z - Instance.CameraInfo.EyeZ;
 
-            Instance.CameraInfo.EyeX += distanceToTargetX / 5.0f;
-            Instance.CameraInfo.EyeY += distanceToTargetY / 5.0f;
-            Instance.CameraInfo.EyeZ += distanceToTargetZ / 5.0f;
+            Instance.CameraInfo.EyeX += distanceToTargetX / 20.0f;
+            Instance.CameraInfo.EyeY += distanceToTargetY / 20.0f;
+            Instance.CameraInfo.EyeZ += distanceToTargetZ / 20.0f;
         }
 
         public void ResetCamera()
