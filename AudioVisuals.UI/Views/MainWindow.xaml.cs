@@ -210,9 +210,10 @@ namespace AudioVisuals.UI
             // Laser particle system
             if (_activeEffect % EffectCount == 0)
             {
-                _leftParticleLaser.Draw(gl, -36.0f, 0.0f, -15.0f, ViewModel.AudioData50);
+                float[] audioData200 = ViewModel.AudioData200;
+                _particleBlender.Draw(gl, -10.45f, 0.0f, 0.0f, audioData200);
                 GlState.Instance.ModelMatrix = glm.rotate(GlState.Instance.ModelMatrix, glm.radians(180.0f), new vec3(0, 1, 0));
-                _rightParticleLaser.Draw(gl, -36.0f, 0.0f, 15.0f, ViewModel.AudioData50);
+                _particleBlender.Draw(gl, -10.45f, 0.0f, 0.0f, audioData200);
             }
 
             // Particle line spectrum
@@ -223,9 +224,10 @@ namespace AudioVisuals.UI
             // Particle blender
             if (_activeEffect % EffectCount == 1)
             {
-                _particleBlender.Draw(gl, -10.45f, 0.0f, 0.0f, ViewModel.AudioData200);
+                float[] audioData50 = ViewModel.AudioData50;
+                _leftParticleLaser.Draw(gl, -36.0f, 0.0f, -15.0f, audioData50);
                 GlState.Instance.ModelMatrix = glm.rotate(GlState.Instance.ModelMatrix, glm.radians(180.0f), new vec3(0, 1, 0));
-                _particleBlender.Draw(gl, -10.45f, 0.0f, 0.0f, ViewModel.AudioData200);
+                _rightParticleLaser.Draw(gl, -36.0f, 0.0f, 15.0f, audioData50);
             }
 
             // Particle burner

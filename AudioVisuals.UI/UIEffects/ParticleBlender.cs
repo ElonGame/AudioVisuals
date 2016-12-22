@@ -72,8 +72,7 @@ namespace AudioVisuals.UI
             {
                 // Which spectrum bar this particle belongs to
                 int bandIndex = particle.ParticleId % BandCount;
-                float rescaledAudio = glm.sin(HalfPi * _scaledInvertedAudioData[bandIndex]);
-                particle.Size = 0.1f + (rescaledAudio * 3.0f);
+                particle.Size = 0.1f + (_scaledInvertedAudioData[bandIndex] * 3.0f);
             });
 
             _particleSystem.Init(gl, OpenGL.GL_SRC_ALPHA, ParticleCount, true, false);
