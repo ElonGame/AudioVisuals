@@ -24,18 +24,14 @@ namespace AudioVisuals.Audio
         private IWaveSource _realtimeSource;
         BasicSpectrumProvider _basicSpectrumProvider;
         private SingleBlockNotificationStream _singleBlockNotificationStream;
-        private Action<float[], float[]> _receiveAudio;
+        private Action<float[], float[], float[]> _receiveAudio;
         private bool _isRunning;
-
-        #endregion
-
-        #region Public Properties
 
         #endregion
 
         #region Constructor
 
-        public RealtimeAudio(Action<float[], float[]> receiveAudio)
+        public RealtimeAudio(Action<float[], float[], float[]> receiveAudio)
         {
             _receiveAudio = receiveAudio;
         }
@@ -72,6 +68,15 @@ namespace AudioVisuals.Audio
                 ScalingStrategy = ScalingStrategy.Linear
             };
 
+            LineSpectrum lineSpectrum1000 = new LineSpectrum(CFftSize)
+            {
+                SpectrumProvider = _basicSpectrumProvider,
+                BarCount = 1000,
+                UseAverage = true,
+                IsXLogScale = true,
+                ScalingStrategy = ScalingStrategy.Linear
+            };
+
             _loopbackCapture.Start();
 
             _singleBlockNotificationStream = new SingleBlockNotificationStream(_soundInSource.ToSampleSource());
@@ -86,10 +91,11 @@ namespace AudioVisuals.Audio
                 {
                     float[] audioData50 = lineSpectrum50.GetSpectrumData(MaxAudioValue);
                     float[] audioData200 = lineSpectrum200.GetSpectrumData(MaxAudioValue);
+                    float[] audioData1000 = lineSpectrum1000.GetSpectrumData(MaxAudioValue);
 
-                    if (audioData50 != null && audioData200 != null)
+                    if (audioData50 != null && audioData200 != null && audioData1000 != null && _receiveAudio != null)
                     {
-                        _receiveAudio(audioData50, audioData200);
+                        _receiveAudio(audioData50, audioData200, audioData1000);
                     }
                 }
             };

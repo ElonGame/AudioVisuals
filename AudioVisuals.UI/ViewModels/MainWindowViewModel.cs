@@ -51,6 +51,19 @@ namespace AudioVisuals.UI
             }
         }
 
+        private float[] _audioData1000;
+        public float[] AudioData1000
+        {
+            get { return _audioData1000; }
+            set
+            {
+                if (_audioData1000 != value)
+                {
+                    _audioData1000 = value;
+                }
+            }
+        }
+
         private float _audioModifier;
         public float AudioModifier
         {
@@ -82,10 +95,11 @@ namespace AudioVisuals.UI
 
         #region Private Methods
 
-        private void receiveAudio(float[] audioData50, float[] audioData200)
+        private void receiveAudio(float[] audioData50, float[] audioData200, float[] audioData1000)
         {
             AudioData50 = audioData50;
             AudioData200 = audioData200;
+            AudioData1000 = audioData1000;
 
             // Calculate AudioModifier based on SpectrumData
             // Use bottom band - most responsive to audio

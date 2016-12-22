@@ -221,7 +221,7 @@ namespace AudioVisuals.UI
             // Particle burner
             if (_activeEffect % 2 == 1)
             {
-                _particleBurner.Draw(gl, 0.0f, -13.0f, 0.0f, ViewModel.AudioData200);
+                _particleBurner.Draw(gl, 0.0f, -13.0f, 0.0f, ViewModel.AudioData1000);
             }
 
             List<Tuple<ParticleSystem, float, float, float>> particleSystemsToRemove = new List<Tuple<ParticleSystem, float, float, float>>();

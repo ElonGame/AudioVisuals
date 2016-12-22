@@ -11,7 +11,7 @@ namespace AudioVisuals.UI
     {
         #region Constants
 
-        private const int ParticleCount = 10000;
+        private const int ParticleCount = 7500;
         private const float MinParticleSize = 0.1f;
         private const float SineWidth = 8.0f;
 
@@ -67,7 +67,7 @@ namespace AudioVisuals.UI
                 switch(particle.LifeStage)
                 {
                     case 0:
-                        if (particle.ParticleId % 2 == 0)
+                        if (particle.ParticleId % 6 < 5)
                         {
                             float particleSine = glm.sin(particle.X * SineWidth);
 
