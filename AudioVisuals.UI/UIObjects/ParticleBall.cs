@@ -13,9 +13,9 @@ namespace AudioVisuals.UI
     {
         #region Constants
 
-        private const float BaseRadius = 4.0f;
-        private const int Stacks = 25;
-        private const int Slices = 25;
+        private const float BaseRadius = 8.0f;
+        private const int Stacks = 50;
+        private const int Slices = 50;
         private const float IdleRotationSpeed = 0.1f;
         private const float MinPointSize = 0.6f;
         private const float MaxPointSize = 1.5f;
@@ -26,10 +26,8 @@ namespace AudioVisuals.UI
         #region Private Member Variables
 
         private Random _random = new Random();
-        private ParticleSystem _seekerParticleSystem = new ParticleSystem();
         private Dictionary<int, vec3> _particleTargetsById = new Dictionary<int, vec3>();
         private vec3 _ballOrigin = new vec3();
-        private vec3 _particleSystemOrigin = new vec3();
         private int _colorIndex;
         private uint _texture;
         private uint[] _vertexArrayObject = new uint[1];
@@ -78,72 +76,6 @@ namespace AudioVisuals.UI
                 gl.EnableVertexAttribArray(1);
             }
             gl.BindVertexArray(0); // Unbind
-
-            _seekerParticleSystem.AfterParticleInit = ((particle, audioModifier) =>
-            {
-                particle.X = 0.0f;
-                particle.Y = (_random.Next(200) - 100.0f) / 800.0f;
-                particle.Z = 0.0f;
-                particle.Size = audioModifier / 3.0f;
-                particle.DieRate = ((_random.Next(100)) + 99.0f) / 35000.0f;
-                particle.Slowdown = 0.0f;
-                particle.Xi = (_random.Next(400) - 200.0f) / 400.0f;
-                particle.Yi = (_random.Next(400) - 200.0f) / 400.0f;
-                particle.Zi = (_random.Next(400) - 200.0f) / 400.0f;
-
-                // Pick a target vertex
-                int targetVertexIndex = _random.Next(_pointSphere.VertexData.Length / _pointSphere.DataStride);
-                vec3 targetVertex = new vec3
-                (
-                    _pointSphere.VertexData[_pointSphere.DataStride * targetVertexIndex + 0],
-                    _pointSphere.VertexData[_pointSphere.DataStride * targetVertexIndex + 1],
-                    _pointSphere.VertexData[_pointSphere.DataStride * targetVertexIndex + 2]
-                );
-
-                if (!_particleTargetsById.ContainsKey(particle.ParticleId))
-                {
-                    _particleTargetsById.Add(particle.ParticleId, targetVertex);
-                }
-                else
-                {
-                    _particleTargetsById[particle.ParticleId] = targetVertex;
-                }
-            });
-            _seekerParticleSystem.AfterParticleUpdate = ((particle, audioModifier) =>
-            {
-                // Head home!
-                if (particle.LifeStage == 0)
-                {
-                    vec3 targetVertex = _particleTargetsById[particle.ParticleId];
-
-                    float dx = (targetVertex.x + _ballOrigin.x - _particleSystemOrigin.x) - particle.X;
-                    float dy = (targetVertex.y + _ballOrigin.y - _particleSystemOrigin.y) - particle.Y;
-                    float dz = (targetVertex.z + _ballOrigin.z - _particleSystemOrigin.z) - particle.Z;
-
-                    particle.Xi = dx / 20.0f;
-                    particle.Yi = dy / 20.0f;
-                    particle.Zi = dz / 20.0f;
-                }
-
-                if (particle.Life <= 0.0f)
-                {
-                    // Give new life
-                    if (particle.LifeStage == 0)
-                    {
-                        particle.LifeStage = 1;
-                        particle.Life = 1.0f;
-                        particle.DieRate = ((_random.Next(100)) + 99.0f) / 5000.0f;
-
-                        // Re-init for "blow away" effect
-                        particle.Xi = (_random.Next(400) - 200.0f) / 400.0f;
-                        particle.Yi = (_random.Next(400) - 200.0f) / 400.0f;
-                        particle.Zi = (_random.Next(400) - 200.0f) / 400.0f;
-                    }
-                }
-            });
-
-            // Particle system init
-            _seekerParticleSystem.Init(gl, OpenGL.GL_SRC_ALPHA, SeekerParticleCount, true, true, _random);
         }
 
         public void Draw(OpenGL gl, float originX, float originY, float originZ, float[] audioData)
@@ -161,7 +93,7 @@ namespace AudioVisuals.UI
                 float g = Constants.Colors[_colorIndex, 1];
                 float b = Constants.Colors[_colorIndex, 2];
                 float a = 0.0f;
-                float size = audioData[0] / 4.0f;
+                float size = audioData[0] / 8.0f;
 
                 if(size < MinPointSize) size = MinPointSize;
                 if(size > MaxPointSize) size = MaxPointSize;
@@ -180,13 +112,7 @@ namespace AudioVisuals.UI
             _rotX += IdleRotationSpeed;
             _rotY += IdleRotationSpeed;
             _rotZ += IdleRotationSpeed;
-            float scaleFactor = 1.0f + (audioData[0] * 0.1f);
-
-            // Draw particle system
-            _particleSystemOrigin.x = -20.0f;
-            _particleSystemOrigin.y = 25.0f;
-            _particleSystemOrigin.z = -20.0f;
-            _seekerParticleSystem.Draw(gl, _particleSystemOrigin.x, _particleSystemOrigin.y, _particleSystemOrigin.z, 1.0f);
+            float scaleFactor = 1.0f + (audioData[0] * 0.04f);
 
             // Begin Draw
             GlState.Instance.ModelMatrix = mat4.identity();

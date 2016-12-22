@@ -13,7 +13,9 @@ namespace AudioVisuals.UI
     /// </summary>
     public partial class MainWindow : Window
     {
-        #region PInvoke
+        #region Constants
+
+        private const int EffectCount = 4;
 
         #endregion
 
@@ -33,6 +35,7 @@ namespace AudioVisuals.UI
         private ParticleLaserSpectrum _rightParticleLaser = new ParticleLaserSpectrum();
         private ParticleLineSpectrum _particleLineSpectrum = new ParticleLineSpectrum();
         private ParticleBurner _particleBurner = new ParticleBurner();
+        private ParticleBlender _particleBlender = new ParticleBlender();
         private ParticleBall _particleBall = new ParticleBall();
         private ObjectLocationInfo _particleBallLocationInfo = new ObjectLocationInfo();
         private List<Tuple<ParticleSystem, float, float, float>> _activeParticleSystems = new List<Tuple<ParticleSystem, float, float, float>>();
@@ -114,6 +117,9 @@ namespace AudioVisuals.UI
 
             // Particle burner
             _particleBurner.Init(gl);
+
+            // Particle blender
+            _particleBlender.Init(gl);
 
             // Beat particle systems
             _beatParticleSystemEmitter.Init(gl);
@@ -201,12 +207,8 @@ namespace AudioVisuals.UI
             // Beat particle system
             //_beatParticleSystemEmitter.Draw(gl, ViewModel.AudioData);
 
-            // Particle ball
-            //_particleBall.Draw(gl, _particleBallLocationInfo.X, _particleBallLocationInfo.Y, _particleBallLocationInfo.Z, ViewModel.AudioData50);
-            //_particleBallLocationInfo.Update();
-
             // Laser particle system
-            if (_activeEffect % 2 == 0)
+            if (_activeEffect % EffectCount == 0)
             {
                 _leftParticleLaser.Draw(gl, -36.0f, 0.0f, -15.0f, ViewModel.AudioData50);
                 GlState.Instance.ModelMatrix = glm.rotate(GlState.Instance.ModelMatrix, glm.radians(180.0f), new vec3(0, 1, 0));
@@ -218,10 +220,25 @@ namespace AudioVisuals.UI
             //GlState.Instance.ModelMatrix = glm.rotate(GlState.Instance.ModelMatrix, glm.radians(180.0f), new vec3(0, 1, 0));
             //_particleLineSpectrum.Draw(gl, -5.0f, -12.0f, 0.0f, ViewModel.AudioData);
 
+            // Particle blender
+            if (_activeEffect % EffectCount == 1)
+            {
+                _particleBlender.Draw(gl, -10.45f, 0.0f, 0.0f, ViewModel.AudioData200);
+                GlState.Instance.ModelMatrix = glm.rotate(GlState.Instance.ModelMatrix, glm.radians(180.0f), new vec3(0, 1, 0));
+                _particleBlender.Draw(gl, -10.45f, 0.0f, 0.0f, ViewModel.AudioData200);
+            }
+
             // Particle burner
-            if (_activeEffect % 2 == 1)
+            if (_activeEffect % EffectCount == 2)
             {
                 _particleBurner.Draw(gl, 0.0f, -13.0f, 0.0f, ViewModel.AudioData1000);
+            }
+
+            // Particle ball
+            if (_activeEffect % EffectCount == 3)
+            {
+                _particleBall.Draw(gl, 0.0f, 0.0f, -10.0f, ViewModel.AudioData50);
+                //_particleBallLocationInfo.Update();
             }
 
             List<Tuple<ParticleSystem, float, float, float>> particleSystemsToRemove = new List<Tuple<ParticleSystem, float, float, float>>();

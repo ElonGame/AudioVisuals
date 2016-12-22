@@ -46,6 +46,7 @@ namespace AudioVisuals.UI
 
         public Action<Particle, float> OverrideParticleInit { get; set; }
         public Action<Particle, float> AfterParticleInit { get; set; }
+        public Action<Particle, float> OverrideParticleUpdate { get; set; }
         public Action<Particle, float> AfterParticleUpdate { get; set; }
 
         #endregion
@@ -141,7 +142,14 @@ namespace AudioVisuals.UI
                 _pointData[_point.DataStride * index + 7] = a;
 
                 // Increment particle location and speed
-                particle.Update();
+                if (OverrideParticleUpdate != null)
+                {
+                    OverrideParticleUpdate(particle, audioModifier);
+                }
+                else
+                {
+                    particle.Update();
+                }
 
                 // Invoke after update delegate if present
                 if(AfterParticleUpdate != null)
@@ -161,6 +169,9 @@ namespace AudioVisuals.UI
                         }
                         else
                         {
+                            // Re-init happening, no longer initial
+                            particle.IsInitialInit = false;
+
                             // Default init
                             particle.Init(_random, audioModifier);
 

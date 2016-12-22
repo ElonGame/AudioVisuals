@@ -14,6 +14,7 @@ namespace AudioVisuals.UI
         public float Size { get; set; }
         public float Life { get; set; }
         public bool IsAlive { get; set; }
+        public bool IsInitialInit { get; set; }
         public float DieRate { get; set; }
         public int LifeStage { get; set; }
         public int LifeStageProgression { get; set; }
@@ -47,6 +48,7 @@ namespace AudioVisuals.UI
         public Particle(int particleId)
         {
             ParticleId = particleId;
+            IsInitialInit = true;
             LifeStage = 0;
             LifeStageProgression = 0;
         }

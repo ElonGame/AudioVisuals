@@ -22,7 +22,7 @@ namespace AudioVisuals.UI
         private Random _random = new Random();
         private float _originX;
         private ParticleSystem _particleSystem = new ParticleSystem();
-        private float[] _invertedSpectrumData;
+        private float[] _invertedAudioData;
 
         #endregion
 
@@ -77,7 +77,7 @@ namespace AudioVisuals.UI
                             }
                             else
                             {
-                                particle.Y = particleSine * (_invertedSpectrumData[particle.LifeStageProgression]  * 6.0f);
+                                particle.Y = particleSine * (_invertedAudioData[particle.LifeStageProgression]  * 6.0f);
                             }
 
                             if (particle.X > (2 * Math.PI * particle.LifeStageProgression) / SineWidth)
@@ -120,25 +120,25 @@ namespace AudioVisuals.UI
             _particleSystem.Init(gl, OpenGL.GL_ONE, ParticleCount, true, true, random);
         }
 
-        public void Draw(OpenGL gl, float originX, float originY, float originZ, float[] spectrumData)
+        public void Draw(OpenGL gl, float originX, float originY, float originZ, float[] audioData)
         {
             _originX = originX;
 
-            if (spectrumData != null)
+            if (audioData != null)
             {
-                if(_invertedSpectrumData == null)
+                if(_invertedAudioData == null)
                 {
-                    _invertedSpectrumData = new float[spectrumData.Length];
+                    _invertedAudioData = new float[audioData.Length];
                 }
 
                 int invertedIndex = 0;
-                for(int index = spectrumData.Length - 1; index > -1; index--)
+                for(int index = audioData.Length - 1; index > -1; index--)
                 {
-                    _invertedSpectrumData[invertedIndex] = spectrumData[index];
+                    _invertedAudioData[invertedIndex] = audioData[index];
                     invertedIndex++;
                 }
 
-                _particleSystem.Draw(gl, originX, originY, originZ, _invertedSpectrumData[_invertedSpectrumData.Length - 1]);
+                _particleSystem.Draw(gl, originX, originY, originZ, _invertedAudioData[_invertedAudioData.Length - 1]);
             }
         }
 
