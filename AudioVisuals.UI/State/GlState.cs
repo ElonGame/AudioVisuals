@@ -26,6 +26,7 @@ namespace AudioVisuals.UI
 
         // Camera
         private CameraInfo _cameraInfo = new CameraInfo();
+        private ObjectLocationInfo _cameraLookAtTarget = new ObjectLocationInfo();
 
         #endregion
 
@@ -101,6 +102,43 @@ namespace AudioVisuals.UI
             ParticleProjectionMatrixLocation = gl.GetUniformLocation(_particleShader.Program, "projectionMatrix");
             ParticleTextureLocation = gl.GetUniformLocation(_particleShader.Program, "particleTexture");
             ParticleHeightOfNearPlaneLocation = gl.GetUniformLocation(_particleShader.Program, "heightOfNearPlane");
+        }
+
+        public void StartAutoMoveCamera()
+        {
+            // Init invisible camera target
+            _cameraLookAtTarget.Init(-30.0f, -30.0f, -40.0f, 30.0f, 30.0f, 40.0f, 0.8f, 0.4f, 0.7f);
+        }
+
+        public void UpdateAutoMoveCamera()
+        {
+            // Move invisible camera target
+            _cameraLookAtTarget.Update();
+
+            // Move the eye in the sky to chase the target
+            float distanceToTargetX = _cameraLookAtTarget.X - Instance.CameraInfo.EyeX;
+            float distanceToTargetY = _cameraLookAtTarget.Y - Instance.CameraInfo.EyeY;
+            float distanceToTargetZ = _cameraLookAtTarget.Z - Instance.CameraInfo.EyeZ;
+
+            Instance.CameraInfo.EyeX += distanceToTargetX / 5.0f;
+            Instance.CameraInfo.EyeY += distanceToTargetY / 5.0f;
+            Instance.CameraInfo.EyeZ += distanceToTargetZ / 5.0f;
+        }
+
+        public void ResetCamera()
+        {
+            // Camera reset
+            Instance.CameraInfo.UpX = 0;
+            Instance.CameraInfo.UpY = 1;
+            Instance.CameraInfo.UpZ = 0;
+
+            Instance.CameraInfo.EyeX = 0.0f;
+            Instance.CameraInfo.EyeY = 0.0f;
+            Instance.CameraInfo.EyeZ = 30.0f;
+
+            Instance.CameraInfo.LookAtX = 0.0f;
+            Instance.CameraInfo.LookAtY = 0.0f;
+            Instance.CameraInfo.LookAtZ = 0.0f;
         }
 
         #endregion

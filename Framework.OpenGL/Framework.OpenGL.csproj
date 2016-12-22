@@ -54,6 +54,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Extensions\ListExtensions.cs" />
     <Compile Include="Extensions\SharpGlExtensions.cs" />
     <Compile Include="GlBuffer.cs" />
     <Compile Include="Extensions\GlmExtensions.cs" />

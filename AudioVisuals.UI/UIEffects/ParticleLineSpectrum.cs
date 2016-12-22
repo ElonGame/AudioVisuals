@@ -103,7 +103,7 @@ namespace AudioVisuals.UI
 
             if (spectrumData != null)
             {
-                // Consider the LineSpectrum as one "item". Start drawing offset -x by half
+                // Consider this as one "item". Start drawing offset -x by half
                 // This means offset = -(bar count / 2) * (thickness + barspacing)
                 initialOffsetX = ((spectrumData.Length / 2.0f) * (BarThickness + BarSpacing)) * -1.0f;
 

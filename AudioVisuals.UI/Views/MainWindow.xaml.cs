@@ -15,7 +15,8 @@ namespace AudioVisuals.UI
     {
         #region Constants
 
-        private const int EffectCount = 4;
+        private const int EffectCount = 5;
+        private const float InitialCameraZ = -20.0f;
 
         #endregion
 
@@ -36,8 +37,8 @@ namespace AudioVisuals.UI
         private ParticleLineSpectrum _particleLineSpectrum = new ParticleLineSpectrum();
         private ParticleBurner _particleBurner = new ParticleBurner();
         private ParticleBlender _particleBlender = new ParticleBlender();
+        private ParticleGlowCube _particleGlowCube = new ParticleGlowCube();
         private ParticleBall _particleBall = new ParticleBall();
-        private ObjectLocationInfo _particleBallLocationInfo = new ObjectLocationInfo();
         private List<Tuple<ParticleSystem, float, float, float>> _activeParticleSystems = new List<Tuple<ParticleSystem, float, float, float>>();
 
         #endregion
@@ -87,11 +88,7 @@ namespace AudioVisuals.UI
             GlState.Instance.Init(gl);
 
             // Init camera position
-            GlState.Instance.CameraInfo.UpX = 0;
-            GlState.Instance.CameraInfo.UpY = 1;
-            GlState.Instance.CameraInfo.UpZ = 0;
-            GlState.Instance.CameraInfo.CenterZ = -20.0f;
-            GlState.Instance.CameraInfo.EyeZ = 10.0f;
+            GlState.Instance.ResetCamera();
 
             // Line ball init
             _lineBall.Init(gl);
@@ -121,12 +118,14 @@ namespace AudioVisuals.UI
             // Particle blender
             _particleBlender.Init(gl);
 
+            // Particle glow cube
+            _particleGlowCube.Init(gl);
+
             // Beat particle systems
             _beatParticleSystemEmitter.Init(gl);
 
             // Particle ball
             _particleBall.Init(gl);
-            _particleBallLocationInfo.Init(-15.0f, -15.0f, -40.0f, 15.0f, 15.0f, 1.0f, 0.8f, 0.4f, 0.7f);
         }
 
         private void OpenGLSurface_Resized(object sender, SharpGL.SceneGraph.OpenGLEventArgs args)
@@ -156,7 +155,6 @@ namespace AudioVisuals.UI
 
             // Camera
             GlState.Instance.ViewMatrix = glm.lookAt(GlState.Instance.CameraInfo.GetEyeVec3(), GlState.Instance.CameraInfo.GetCenterVec3(), GlState.Instance.CameraInfo.GetUpVec3());
-            GlState.Instance.ViewMatrix = glm.translate(GlState.Instance.ViewMatrix, new vec3(0.0f, 0.0f, -20.0f));
 
             // Window width and height used frequently
             float width = (float)ActualWidth;
@@ -197,8 +195,9 @@ namespace AudioVisuals.UI
             // Draw particle systems using particle model shader
             GlState.Instance.ParticleShader.Use(gl);
 
-            gl.UniformMatrix4(GlState.Instance.ParticleProjectionMatrixLocation, 1, false, GlState.Instance.ProjectionMatrix.to_array());
+            gl.UniformMatrix4(GlState.Instance.ParticleModelMatrixLocation, 1, false, GlState.Instance.ModelMatrix.to_array());
             gl.UniformMatrix4(GlState.Instance.ParticleViewMatrixLocation, 1, false, GlState.Instance.ViewMatrix.to_array());
+            gl.UniformMatrix4(GlState.Instance.ParticleProjectionMatrixLocation, 1, false, GlState.Instance.ProjectionMatrix.to_array());
             gl.Uniform1(GlState.Instance.ParticleHeightOfNearPlaneLocation, _heightOfNearPlane);
 
             // Main particle system
@@ -207,7 +206,7 @@ namespace AudioVisuals.UI
             // Beat particle system
             //_beatParticleSystemEmitter.Draw(gl, ViewModel.AudioData);
 
-            // Laser particle system
+            // Particle blender
             if (_activeEffect % EffectCount == 0)
             {
                 float[] audioData200 = ViewModel.AudioData200;
@@ -216,13 +215,20 @@ namespace AudioVisuals.UI
                 _particleBlender.Draw(gl, -10.45f, 0.0f, 0.0f, audioData200);
             }
 
+            // Particle glow cube
+            if (_activeEffect % EffectCount == 1)
+            {
+                GlState.Instance.UpdateAutoMoveCamera();
+                _particleGlowCube.Draw(gl, 0.0f, 0.0f, 0.0f, ViewModel.AudioData200);
+            }
+
             // Particle line spectrum
             //_particleLineSpectrum.Draw(gl, 0.0f, -12.0f, 0.0f, ViewModel.AudioData);
             //GlState.Instance.ModelMatrix = glm.rotate(GlState.Instance.ModelMatrix, glm.radians(180.0f), new vec3(0, 1, 0));
             //_particleLineSpectrum.Draw(gl, -5.0f, -12.0f, 0.0f, ViewModel.AudioData);
 
             // Particle blender
-            if (_activeEffect % EffectCount == 1)
+            if (_activeEffect % EffectCount == 2)
             {
                 float[] audioData50 = ViewModel.AudioData50;
                 _leftParticleLaser.Draw(gl, -36.0f, 0.0f, -15.0f, audioData50);
@@ -231,16 +237,15 @@ namespace AudioVisuals.UI
             }
 
             // Particle burner
-            if (_activeEffect % EffectCount == 2)
+            if (_activeEffect % EffectCount == 3)
             {
                 _particleBurner.Draw(gl, 0.0f, -13.0f, 0.0f, ViewModel.AudioData1000);
             }
 
             // Particle ball
-            if (_activeEffect % EffectCount == 3)
+            if (_activeEffect % EffectCount == 4)
             {
                 _particleBall.Draw(gl, 0.0f, 0.0f, -10.0f, ViewModel.AudioData50);
-                //_particleBallLocationInfo.Update();
             }
 
             List<Tuple<ParticleSystem, float, float, float>> particleSystemsToRemove = new List<Tuple<ParticleSystem, float, float, float>>();
@@ -271,6 +276,16 @@ namespace AudioVisuals.UI
             if (e.Key == Key.F1)
             {
                 _activeEffect++;
+
+                // Effect 1 uses the auto move camera
+                if (_activeEffect % EffectCount == 1)
+                {
+                    GlState.Instance.StartAutoMoveCamera();
+                }
+                else
+                {
+                    GlState.Instance.ResetCamera();
+                }
             }
 
             if ((Keyboard.GetKeyStates(Key.P) & KeyStates.Down) > 0)
@@ -302,23 +317,23 @@ namespace AudioVisuals.UI
             if ((Keyboard.GetKeyStates(Key.A) & KeyStates.Down) > 0)
             {
                 GlState.Instance.CameraInfo.EyeX -= 1.0f;
-                GlState.Instance.CameraInfo.CenterX -= 1.0f;
+                GlState.Instance.CameraInfo.LookAtX -= 1.0f;
             }
             
             if ((Keyboard.GetKeyStates(Key.D) & KeyStates.Down) > 0)
             {
                 GlState.Instance.CameraInfo.EyeX += 1.0f;
-                GlState.Instance.CameraInfo.CenterX += 1.0f;
+                GlState.Instance.CameraInfo.LookAtX += 1.0f;
             }
 
             if ((Keyboard.GetKeyStates(Key.Left) & KeyStates.Down) > 0)
             {
-                GlState.Instance.CameraInfo.CenterX -= 1.0f;
+                GlState.Instance.CameraInfo.LookAtX -= 1.0f;
             }
 
             if ((Keyboard.GetKeyStates(Key.Right) & KeyStates.Down) > 0)
             {
-                GlState.Instance.CameraInfo.CenterX += 1.0f;
+                GlState.Instance.CameraInfo.LookAtX += 1.0f;
             }
         }
 

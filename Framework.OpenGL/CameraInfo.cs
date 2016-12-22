@@ -7,9 +7,9 @@ namespace Framework.OGL
         public float EyeY { get; set; }
         public float EyeZ { get; set; }
 
-        public float CenterX { get; set; }
-        public float CenterY { get; set; }
-        public float CenterZ { get; set; }
+        public float LookAtX { get; set; }
+        public float LookAtY { get; set; }
+        public float LookAtZ { get; set; }
 
         public float UpX { get; set; }
         public float UpY { get; set; }
@@ -22,7 +22,7 @@ namespace Framework.OGL
 
         public vec3 GetCenterVec3()
         {
-            return new vec3(CenterX, CenterY, CenterZ);
+            return new vec3(LookAtX, LookAtY, LookAtZ);
         }
 
         public vec3 GetUpVec3()

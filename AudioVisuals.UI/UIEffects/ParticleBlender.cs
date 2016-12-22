@@ -1,9 +1,6 @@
-﻿using Framework.OGL;
-using GlmNet;
+﻿using GlmNet;
 using SharpGL;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace AudioVisuals.UI
 {
@@ -99,7 +96,7 @@ namespace AudioVisuals.UI
 
             if (audioData != null)
             {
-                // Consider the LineSpectrum as one "item". Start drawing offset -x by half
+                // Consider this as one "item". Start drawing offset -x by half
                 // This means offset = -(bar count / 2) * (thickness + barspacing)
                 initialOffsetX = ((BandCount / 2.0f) * (BarThickness + BarSpacing)) * -1.0f;
                 _particleSystem.Draw(gl, initialOffsetX + originX, originY, originZ, audioData[0]);

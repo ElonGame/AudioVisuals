@@ -14,8 +14,8 @@ namespace AudioVisuals.UI
         private const int ParticleCount = 20000;
         private const int BandCount = 400;
         private const float PIPart = ((float)Math.PI / 2.0f) / BandCount;
-        private const float BarThickness = 0.1f;
-        private const float BarSpacing = 0.0f;
+        private const float BandThickness = 0.1f;
+        private const float BandSpacing = 0.0f;
         private const int ColorRotateIntervalMs = 5000;
 
         #endregion
@@ -47,7 +47,7 @@ namespace AudioVisuals.UI
             setColors();
             _colorRotateStopwatch.Start();
 
-            float adjustedThickness = BarThickness * 100.0f;
+            float adjustedThickness = BandThickness * 100.0f;
 
             // Particle system init
             _particleSystem.AfterParticleInit = ((particle, audioModifier) =>
@@ -56,7 +56,7 @@ namespace AudioVisuals.UI
                 int bandIndex = particle.ParticleId % BandCount;
 
                 // The x offset of this particle
-                float offsetX = bandIndex * (BarThickness + BarSpacing);
+                float offsetX = bandIndex * (BandThickness + BandSpacing);
 
                 int color = _colorIndices[bandIndex];
 
@@ -102,9 +102,9 @@ namespace AudioVisuals.UI
 
             if (audioData != null)
             {
-                // Consider the LineSpectrum as one "item". Start drawing offset -x by half
+                // Consider this as one "item". Start drawing offset -x by half
                 // This means offset = -(bar count / 2) * (thickness + barspacing)
-                initialOffsetX = ((BandCount / 2.0f) * (BarThickness + BarSpacing)) * -1.0f;
+                initialOffsetX = ((BandCount / 2.0f) * (BandThickness + BandSpacing)) * -1.0f;
                 _particleSystem.Draw(gl, initialOffsetX + originX, originY, originZ, audioData[0]);
             }
         }
