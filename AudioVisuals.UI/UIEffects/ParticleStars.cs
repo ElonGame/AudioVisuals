@@ -13,7 +13,7 @@ namespace AudioVisuals.UI
         private const float HalfPi = (float)Math.PI / 2.0f;
         private const float PIPart = HalfPi / BandCount;
         private const float TotalWidth = 100.0f;
-        private const float ExlcusionFromOriginRadius = 30.0f;
+        private const float ExlcusionFromOriginRadius = 32.0f;
 
         #endregion
 
