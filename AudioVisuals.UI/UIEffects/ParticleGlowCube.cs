@@ -25,7 +25,7 @@ namespace AudioVisuals.UI
         private Random _random = new Random();
         private int[] _colorIndices = new int[ColorCount];
         private ParticleSystem _particleSystem = new ParticleSystem();
-        private float[] _scaledInvertedAudioData = new float[BandCount];
+        private float[] _scaledAudioData = new float[BandCount];
         private List<vec3> _bandOrigins = new List<vec3>(BandCount);
 
         #endregion
@@ -103,7 +103,7 @@ namespace AudioVisuals.UI
             {
                 // Which spectrum bar this particle belongs to
                 int bandIndex = particle.ParticleId % BandCount;
-                particle.Size = 0.1f + (_scaledInvertedAudioData[bandIndex] * 1.5f);
+                particle.Size = 0.1f + (_scaledAudioData[bandIndex] * 1.2f);
             });
 
             _particleSystem.Init(gl, OpenGL.GL_SRC_ALPHA, ParticleCount, true, false);
@@ -112,20 +112,11 @@ namespace AudioVisuals.UI
         public void Draw(OpenGL gl, float originX, float originY, float originZ, float[] audioData)
         {
             // Scale (smooth out) audio data
-            float[] scaledAudioData = new float[BandCount];
             float scaledPart = 0.1f; // Go from 0 to PI / 2
             for (int index = 0; index < BandCount; index++)
             {
-                scaledAudioData[index] = audioData[index] * glm.sin(scaledPart);
+                _scaledAudioData[index] = audioData[index] * glm.sin(scaledPart);
                 scaledPart += PIPart;
-            }
-
-            // Invert audio data
-            int invertedIndex = 0;
-            for (int index = BandCount - 1; index > -1; index--)
-            {
-                _scaledInvertedAudioData[invertedIndex] = scaledAudioData[index];
-                invertedIndex++;
             }
 
             if (audioData != null)
