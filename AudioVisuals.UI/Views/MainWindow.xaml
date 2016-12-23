@@ -34,7 +34,7 @@
             OpenGLDraw="OpenGLSurface_OpenGLDraw"
             RenderContextType="FBO"
             OpenGLVersion="OpenGL3_3"
-            FrameRate="500"
+            FrameRate="1000"
             Grid.Row="0"
             Grid.Column="0" />
 

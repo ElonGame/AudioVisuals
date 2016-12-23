@@ -138,7 +138,7 @@ namespace AudioVisuals.UI
                     invertedIndex++;
                 }
 
-                _particleSystem.Draw(gl, originX, originY, originZ, _invertedAudioData[_invertedAudioData.Length - 1]);
+                _particleSystem.Draw(gl, originX, originY, originZ, _invertedAudioData[_invertedAudioData.Length - 1], true);
             }
         }
 

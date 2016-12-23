@@ -44,6 +44,10 @@ namespace AudioVisuals.UI
         public bool IsActive { get { return _isActive; } }
         public vec3 CurrentColor { get; set; }
 
+        public float OriginX { get; private set; }
+        public float OriginY { get; private set; }
+        public float OriginZ { get; private set; }
+
         public Action<Particle, float> OverrideParticleInit { get; set; }
         public Action<Particle, float> AfterParticleInit { get; set; }
         public Action<Particle, float> OverrideParticleUpdate { get; set; }
@@ -111,8 +115,12 @@ namespace AudioVisuals.UI
             gl.BindVertexArray(0); // Unbind
         }
 
-        public void Draw(OpenGL gl, float originX, float originY, float originZ, float audioModifier)
+        public void Draw(OpenGL gl, float originX, float originY, float originZ, float audioModifier, bool doOriginTranslation)
         {
+            OriginX = originX;
+            OriginY = originY;
+            OriginZ = OriginZ;
+
             // Rotate colors
             if (_colorRotateStopwatch.ElapsedMilliseconds >= ColorRotateIntervalMs)
             {
@@ -206,9 +214,12 @@ namespace AudioVisuals.UI
                     }
                 }
             }
-            
+
             // Begin Draw
-            GlState.Instance.ModelMatrix = glm.translate(GlState.Instance.ModelMatrix, new vec3(originX, originY, originZ));
+            if (doOriginTranslation)
+            {
+                GlState.Instance.ModelMatrix = glm.translate(GlState.Instance.ModelMatrix, new vec3(originX, originY, originZ));
+            }
 
             // Update buffers
             gl.BindBuffer(OpenGL.GL_ARRAY_BUFFER, _vertexBufferObject[0]);
@@ -235,7 +246,10 @@ namespace AudioVisuals.UI
             gl.DepthFunc(OpenGL.GL_LESS);
             gl.BlendFunc(OpenGL.GL_SRC_ALPHA, OpenGL.GL_ONE_MINUS_SRC_ALPHA);
 
-            GlState.Instance.ModelMatrix = mat4.identity();
+            if (doOriginTranslation)
+            {
+                GlState.Instance.ModelMatrix = mat4.identity();
+            }
             // End Draw
         }
 

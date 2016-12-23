@@ -63,6 +63,7 @@ namespace AudioVisuals.UI
         public mat4 ProjectionMatrix { get { return _projectionMatrix; } set { _projectionMatrix = value; } }
 
         public CameraInfo CameraInfo { get { return _cameraInfo; } }
+        public bool IsAutoMoveCameraActive { get; set; }
 
         #endregion
 
@@ -108,6 +109,7 @@ namespace AudioVisuals.UI
         {
             // Init invisible camera target
             _cameraLookAtTarget.Init(-30.0f, -30.0f, -40.0f, 30.0f, 30.0f, 40.0f, 0.8f, 0.4f, 0.7f);
+            IsAutoMoveCameraActive = true;
         }
 
         public void UpdateAutoMoveCamera()
@@ -120,25 +122,27 @@ namespace AudioVisuals.UI
             float distanceToTargetY = _cameraLookAtTarget.Y - Instance.CameraInfo.EyeY;
             float distanceToTargetZ = _cameraLookAtTarget.Z - Instance.CameraInfo.EyeZ;
 
-            Instance.CameraInfo.EyeX += distanceToTargetX / 20.0f;
-            Instance.CameraInfo.EyeY += distanceToTargetY / 20.0f;
-            Instance.CameraInfo.EyeZ += distanceToTargetZ / 20.0f;
+            CameraInfo.EyeX += distanceToTargetX / 20.0f;
+            CameraInfo.EyeY += distanceToTargetY / 20.0f;
+            CameraInfo.EyeZ += distanceToTargetZ / 20.0f;
         }
 
         public void ResetCamera()
         {
             // Camera reset
-            Instance.CameraInfo.UpX = 0;
-            Instance.CameraInfo.UpY = 1;
-            Instance.CameraInfo.UpZ = 0;
+            IsAutoMoveCameraActive = false;
+            
+            CameraInfo.UpX = 0;
+            CameraInfo.UpY = 1;
+            CameraInfo.UpZ = 0;
 
-            Instance.CameraInfo.EyeX = 0.0f;
-            Instance.CameraInfo.EyeY = 0.0f;
-            Instance.CameraInfo.EyeZ = 30.0f;
+            CameraInfo.EyeX = 0.0f;
+            CameraInfo.EyeY = 0.0f;
+            CameraInfo.EyeZ = 30.0f;
 
-            Instance.CameraInfo.LookAtX = 0.0f;
-            Instance.CameraInfo.LookAtY = 0.0f;
-            Instance.CameraInfo.LookAtZ = 0.0f;
+            CameraInfo.LookAtX = 0.0f;
+            CameraInfo.LookAtY = 0.0f;
+            CameraInfo.LookAtZ = 0.0f;
         }
 
         #endregion

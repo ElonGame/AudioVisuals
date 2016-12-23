@@ -32,6 +32,7 @@ namespace AudioVisuals.UI
         private BeatParticleSystemEmitter _beatParticleSystemEmitter = new BeatParticleSystemEmitter();
         private LaserFlare _laserFlare = new LaserFlare();
         private LightningStriker _lightningStriker = new LightningStriker();
+        private ParticleStars _particleStars = new ParticleStars();
         private ParticleLaserSpectrum _leftParticleLaser = new ParticleLaserSpectrum();
         private ParticleLaserSpectrum _rightParticleLaser = new ParticleLaserSpectrum();
         private ParticleLineSpectrum _particleLineSpectrum = new ParticleLineSpectrum();
@@ -39,7 +40,6 @@ namespace AudioVisuals.UI
         private ParticleBlender _particleBlender = new ParticleBlender();
         private ParticleGlowCube _particleGlowCube = new ParticleGlowCube();
         private ParticleBall _particleBall = new ParticleBall();
-        private List<Tuple<ParticleSystem, float, float, float>> _activeParticleSystems = new List<Tuple<ParticleSystem, float, float, float>>();
 
         #endregion
 
@@ -55,6 +55,21 @@ namespace AudioVisuals.UI
         {
             InitializeComponent();
 
+            MessageBoxResult result = MessageBox.Show("Fullscreen? (ESC to exit)", "Loopback Audio Visualization", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
+
+            if (result == MessageBoxResult.Yes)
+            {
+                WindowStyle = WindowStyle.None;
+                WindowState = WindowState.Maximized;
+                ResizeMode = ResizeMode.NoResize;
+            }
+
+            if(result == MessageBoxResult.Cancel)
+            {
+                Close();
+                return;
+            }
+
             DataContext = new MainWindowViewModel();
         }
 
@@ -64,7 +79,10 @@ namespace AudioVisuals.UI
 
         private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            ViewModel.Audio.StopListen();
+            if (ViewModel != null)
+            {
+                ViewModel.Audio.StopListen();
+            }
         }
 
         private void OpenGLSurface_OpenGLInitialized(object sender, SharpGL.SceneGraph.OpenGLEventArgs args)
@@ -108,6 +126,9 @@ namespace AudioVisuals.UI
             // Laser particle system init
             _leftParticleLaser.Init(gl, _random);
             _rightParticleLaser.Init(gl, _random);
+
+            // Particle stars
+            _particleStars.Init(gl);
 
             // Particle line spectrum
             _particleLineSpectrum.Init(gl);
@@ -206,20 +227,28 @@ namespace AudioVisuals.UI
             // Beat particle system
             //_beatParticleSystemEmitter.Draw(gl, ViewModel.AudioData);
 
+            // Particle stars (always draw regardless of effect)
+            _particleStars.Draw(gl, 0.0f, 0.0f, 0.0f, ViewModel.AudioData50);
+
             // Particle blender
             if (_activeEffect % EffectCount == 0)
             {
-                float[] audioData200 = ViewModel.AudioData200;
-                _particleBlender.Draw(gl, -10.45f, 0.0f, 0.0f, audioData200);
-                GlState.Instance.ModelMatrix = glm.rotate(GlState.Instance.ModelMatrix, glm.radians(180.0f), new vec3(0, 1, 0));
-                _particleBlender.Draw(gl, -10.45f, 0.0f, 0.0f, audioData200);
+                if(!GlState.Instance.IsAutoMoveCameraActive)
+                {
+                    GlState.Instance.StartAutoMoveCamera();
+                }
+
+                GlState.Instance.UpdateAutoMoveCamera();
+                _particleGlowCube.Draw(gl, 0.0f, 0.0f, 0.0f, ViewModel.AudioData200);
             }
 
             // Particle glow cube
             if (_activeEffect % EffectCount == 1)
             {
-                GlState.Instance.UpdateAutoMoveCamera();
-                _particleGlowCube.Draw(gl, 0.0f, 0.0f, 0.0f, ViewModel.AudioData200);
+                float[] audioData200 = ViewModel.AudioData200;
+                _particleBlender.Draw(gl, -10.45f, 0.0f, 0.0f, audioData200);
+                GlState.Instance.ModelMatrix = glm.rotate(GlState.Instance.ModelMatrix, glm.radians(180.0f), new vec3(0, 1, 0));
+                _particleBlender.Draw(gl, -10.45f, 0.0f, 0.0f, audioData200);
             }
 
             // Particle line spectrum
@@ -247,21 +276,6 @@ namespace AudioVisuals.UI
             {
                 _particleBall.Draw(gl, 0.0f, 0.0f, -10.0f, ViewModel.AudioData50);
             }
-
-            List<Tuple<ParticleSystem, float, float, float>> particleSystemsToRemove = new List<Tuple<ParticleSystem, float, float, float>>();
-            foreach (Tuple<ParticleSystem, float, float, float> particleSystemInfo in _activeParticleSystems)
-            {
-                if (particleSystemInfo.Item1.IsActive)
-                {
-                    particleSystemInfo.Item1.Draw(gl, particleSystemInfo.Item2, particleSystemInfo.Item3, particleSystemInfo.Item4, 0.0f);
-                }
-                else
-                {
-                    particleSystemsToRemove.Add(particleSystemInfo);
-                }
-            }
-
-            particleSystemsToRemove.ForEach(ps => _activeParticleSystems.Remove(ps));
         }
 
         private void Window_KeyDown(object sender, KeyEventArgs e)
@@ -278,28 +292,10 @@ namespace AudioVisuals.UI
                 _activeEffect++;
 
                 // Effect 1 uses the auto move camera
-                if (_activeEffect % EffectCount == 1)
-                {
-                    GlState.Instance.StartAutoMoveCamera();
-                }
-                else
+                if (_activeEffect % EffectCount != 0)
                 {
                     GlState.Instance.ResetCamera();
                 }
-            }
-
-            if ((Keyboard.GetKeyStates(Key.P) & KeyStates.Down) > 0)
-            {
-                ParticleSystem particleSystem = new ParticleSystem();
-                particleSystem.AfterParticleInit = ((particle, speedModifer) => 
-                {
-                    particle.SpeedModifier = 5.0f;
-                });
-                particleSystem.Init(gl, OpenGL.GL_ONE, 500, false, false);
-                float originX = _random.Next(20) - 10;
-                float originY = _random.Next(20) - 10;
-                float originZ = _random.Next(20) - 40;
-                _activeParticleSystems.Add(new Tuple<ParticleSystem, float, float, float>(particleSystem, originX, originY, originZ));
             }
 
             if ((Keyboard.GetKeyStates(Key.W) & KeyStates.Down) > 0)

@@ -16,7 +16,7 @@ namespace AudioVisuals.UI
         private const int ColorCount = 15;
         private const float HalfPi = (float)Math.PI / 2.0f;
         private const float PIPart = HalfPi / BandCount;
-        private const float BandThickness = 5.0f; 
+        private const float BandThickness = 4.5f; 
 
         #endregion
 
@@ -108,7 +108,7 @@ namespace AudioVisuals.UI
 
             _particleSystem.Init(gl, OpenGL.GL_SRC_ALPHA, ParticleCount, true, false);
         }
-
+        
         public void Draw(OpenGL gl, float originX, float originY, float originZ, float[] audioData)
         {
             // Scale (smooth out) audio data
@@ -131,7 +131,7 @@ namespace AudioVisuals.UI
             if (audioData != null)
             {
                 // Draw
-                _particleSystem.Draw(gl, originX, originY, originZ, audioData[0]);
+                _particleSystem.Draw(gl, originX, originY, originZ, audioData[0], true);
             }
         }
 

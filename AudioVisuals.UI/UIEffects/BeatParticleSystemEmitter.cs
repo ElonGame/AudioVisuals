@@ -53,7 +53,7 @@ namespace AudioVisuals.UI
             {
                 if (particleSystemInfo.Item1.IsActive)
                 {
-                    particleSystemInfo.Item1.Draw(gl, particleSystemInfo.Item2, particleSystemInfo.Item3, particleSystemInfo.Item4, 0.0f);
+                    particleSystemInfo.Item1.Draw(gl, particleSystemInfo.Item2, particleSystemInfo.Item3, particleSystemInfo.Item4, 0.0f, true);
                 }
                 else
                 {

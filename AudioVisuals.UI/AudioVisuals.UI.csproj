@@ -77,6 +77,7 @@
     <Compile Include="Constants.cs" />
     <Compile Include="State\GlState.cs" />
     <Compile Include="UIEffects\BeatParticleSystemEmitter.cs" />
+    <Compile Include="UIEffects\ParticleStars.cs" />
     <Compile Include="UIEffects\ParticleGlowCube.cs" />
     <Compile Include="UIEffects\ParticleBlender.cs" />
     <Compile Include="UIEffects\ParticleBurner.cs" />

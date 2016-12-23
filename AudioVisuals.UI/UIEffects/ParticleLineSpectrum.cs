@@ -114,7 +114,7 @@ namespace AudioVisuals.UI
                     _barHeights[index] = height;
                 }
 
-                _particleSystem.Draw(gl, initialOffsetX + originX, originY, originZ, 1.0f);
+                _particleSystem.Draw(gl, initialOffsetX + originX, originY, originZ, 1.0f, true);
             }
         }
 
