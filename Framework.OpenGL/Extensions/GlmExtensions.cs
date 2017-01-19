@@ -81,5 +81,10 @@ namespace Framework.OGL
 
             return billboardMatrix;
         }
+
+        public static float Length(this vec3 vector)
+        {
+            return (float)Math.Sqrt((vector.x * vector.x) + (vector.y * vector.y) + (vector.z * vector.z));
+        }
     }
 }

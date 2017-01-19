@@ -230,19 +230,20 @@ namespace AudioVisuals.UI
             // Particle stars (always draw regardless of effect)
             _particleStars.Draw(gl, 0.0f, 0.0f, 0.0f, ViewModel.AudioData50);
 
-            // Particle blender
+            // Particle glow cube
             if (_activeEffect % EffectCount == 0)
             {
-                if(!GlState.Instance.IsAutoMoveCameraActive)
-                {
-                    GlState.Instance.StartAutoMoveCamera();
-                }
+                _particleBurner.Draw(gl, 0.0f, -13.0f, 0.0f, ViewModel.AudioData1000);
+                //if(!GlState.Instance.IsAutoMoveCameraActive)
+                //{
+                //    GlState.Instance.StartAutoMoveCamera();
+                //}
 
-                GlState.Instance.UpdateAutoMoveCamera();
-                _particleGlowCube.Draw(gl, 0.0f, 0.0f, 0.0f, ViewModel.AudioData200);
+                //GlState.Instance.UpdateAutoMoveCamera();
+                //_particleGlowCube.Draw(gl, 0.0f, 0.0f, 0.0f, ViewModel.AudioData200);
             }
 
-            // Particle glow cube
+            // Particle blender
             if (_activeEffect % EffectCount == 1)
             {
                 float[] audioData200 = ViewModel.AudioData200;
@@ -256,7 +257,7 @@ namespace AudioVisuals.UI
             //GlState.Instance.ModelMatrix = glm.rotate(GlState.Instance.ModelMatrix, glm.radians(180.0f), new vec3(0, 1, 0));
             //_particleLineSpectrum.Draw(gl, -5.0f, -12.0f, 0.0f, ViewModel.AudioData);
 
-            // Particle blender
+            // Particle laser
             if (_activeEffect % EffectCount == 2)
             {
                 float[] audioData50 = ViewModel.AudioData50;

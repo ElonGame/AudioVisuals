@@ -13,6 +13,7 @@ namespace AudioVisuals.UI
 
         public float Size { get; set; }
         public float Life { get; set; }
+        public float TimeAlive { get { return 1.0f - Life; } }
         public bool IsAlive { get; set; }
         public bool IsInitialInit { get; set; }
         public float DieRate { get; set; }
@@ -39,6 +40,9 @@ namespace AudioVisuals.UI
 
         // Optional speed modifier
         public float SpeedModifier { get; set; }
+
+        // Optional chaos modifier
+        public float ChaosModifier { get; set; }
 
         // X/Y/Z Gravity pull
         public float Xg { get; set; }

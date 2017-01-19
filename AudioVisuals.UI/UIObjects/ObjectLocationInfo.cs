@@ -35,6 +35,10 @@ namespace AudioVisuals.UI
             YMin = yMin;
             ZMin = zMin;
 
+            X = xMin;
+            Y = yMin;
+            Z = zMin;
+
             XMax = xMax;
             YMax = yMax;
             ZMax = zMax;
