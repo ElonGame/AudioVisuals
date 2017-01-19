@@ -60,7 +60,7 @@ namespace Framework.OGL
         public PerlinNoise(int seed)
         {
             _random = new Random(seed);
-            InitGradients();
+            initGradients();
         }
 
         public vec3 ComputeCurl(float x, float y, float z, float epsilon)
@@ -110,41 +110,41 @@ namespace Framework.OGL
             int ix = (int)Math.Floor(x);
             float fx0 = x - ix;
             float fx1 = fx0 - 1;
-            float wx = Smooth(fx0);
+            float wx = smooth(fx0);
 
             int iy = (int)Math.Floor(y);
             float fy0 = y - iy;
             float fy1 = fy0 - 1;
-            float wy = Smooth(fy0);
+            float wy = smooth(fy0);
 
             int iz = (int)Math.Floor(z);
             float fz0 = z - iz;
             float fz1 = fz0 - 1;
-            float wz = Smooth(fz0);
+            float wz = smooth(fz0);
 
-            float vx0 = Lattice(ix, iy, iz, fx0, fy0, fz0);
-            float vx1 = Lattice(ix + 1, iy, iz, fx1, fy0, fz0);
-            float vy0 = Lerp(wx, vx0, vx1);
+            float vx0 = lattice(ix, iy, iz, fx0, fy0, fz0);
+            float vx1 = lattice(ix + 1, iy, iz, fx1, fy0, fz0);
+            float vy0 = lerp(wx, vx0, vx1);
 
-            vx0 = Lattice(ix, iy + 1, iz, fx0, fy1, fz0);
-            vx1 = Lattice(ix + 1, iy + 1, iz, fx1, fy1, fz0);
-            float vy1 = Lerp(wx, vx0, vx1);
+            vx0 = lattice(ix, iy + 1, iz, fx0, fy1, fz0);
+            vx1 = lattice(ix + 1, iy + 1, iz, fx1, fy1, fz0);
+            float vy1 = lerp(wx, vx0, vx1);
 
-            float vz0 = Lerp(wy, vy0, vy1);
+            float vz0 = lerp(wy, vy0, vy1);
 
-            vx0 = Lattice(ix, iy, iz + 1, fx0, fy0, fz1);
-            vx1 = Lattice(ix + 1, iy, iz + 1, fx1, fy0, fz1);
-            vy0 = Lerp(wx, vx0, vx1);
+            vx0 = lattice(ix, iy, iz + 1, fx0, fy0, fz1);
+            vx1 = lattice(ix + 1, iy, iz + 1, fx1, fy0, fz1);
+            vy0 = lerp(wx, vx0, vx1);
 
-            vx0 = Lattice(ix, iy + 1, iz + 1, fx0, fy1, fz1);
-            vx1 = Lattice(ix + 1, iy + 1, iz + 1, fx1, fy1, fz1);
-            vy1 = Lerp(wx, vx0, vx1);
+            vx0 = lattice(ix, iy + 1, iz + 1, fx0, fy1, fz1);
+            vx1 = lattice(ix + 1, iy + 1, iz + 1, fx1, fy1, fz1);
+            vy1 = lerp(wx, vx0, vx1);
 
-            float vz1 = Lerp(wy, vy0, vy1);
-            return Lerp(wz, vz0, vz1);
+            float vz1 = lerp(wy, vy0, vy1);
+            return lerp(wz, vz0, vz1);
         }
 
-        private void InitGradients()
+        private void initGradients()
         {
             for (int i = 0; i < GradientSizeTable; i++)
             {
@@ -157,33 +157,33 @@ namespace Framework.OGL
             }
         }
 
-        private int Permutate(int x)
+        private int permutate(int x)
         {
             const int mask = GradientSizeTable - 1;
             return _perm[x & mask];
         }
 
-        private int Index(int ix, int iy, int iz)
+        private int gradientIndex(int ix, int iy, int iz)
         {
             // Turn an XYZ triplet into a single gradient table index.
-            return Permutate(ix + Permutate(iy + Permutate(iz)));
+            return permutate(ix + permutate(iy + permutate(iz)));
         }
 
-        private float Lattice(int ix, int iy, int iz, float fx, float fy, float fz)
+        private float lattice(int ix, int iy, int iz, float fx, float fy, float fz)
         {
             // Look up a random gradient at [ix,iy,iz] and dot it with the [fx,fy,fz] vector.
-            int index = Index(ix, iy, iz);
+            int index = gradientIndex(ix, iy, iz);
             int g = index * 3;
             return _gradients[g] * fx + _gradients[g + 1] * fy + _gradients[g + 2] * fz;
         }
 
-        private float Lerp(float t, float value0, float value1)
+        private float lerp(float t, float value0, float value1)
         {
             // Simple linear interpolation.
             return value0 + t * (value1 - value0);
         }
 
-        private float Smooth(float x)
+        private float smooth(float x)
         {
             /* Smoothing curve. This is used to calculate interpolants so that the noise
               doesn't look blocky when the frequency is low. */

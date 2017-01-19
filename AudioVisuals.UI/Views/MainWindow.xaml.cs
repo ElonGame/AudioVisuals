@@ -233,7 +233,7 @@ namespace AudioVisuals.UI
             // Particle glow cube
             if (_activeEffect % EffectCount == 0)
             {
-                _particleBurner.Draw(gl, 0.0f, -13.0f, 0.0f, ViewModel.AudioData1000);
+                _particleBurner.Draw(gl, 0.0f, 0.0f, 0.0f, ViewModel.AudioData1000);
                 //if(!GlState.Instance.IsAutoMoveCameraActive)
                 //{
                 //    GlState.Instance.StartAutoMoveCamera();

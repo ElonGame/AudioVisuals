@@ -20,7 +20,7 @@ namespace AudioVisuals.UI
         private const int ColorRotateIntervalMs = 5000;
 
         // Noise
-        private const float CurlEpsilon = 1.0f;
+        private const float CurlEpsilon = 0.75f;
 
         #endregion
 
@@ -51,7 +51,7 @@ namespace AudioVisuals.UI
         public void Init(OpenGL gl)
         {
             // Init location source
-            _emitterLocation.Init(0.0f, 13.0f, 0.0f, 20.0f, 30.0f, 0.0f, 0.2f, 0.2f, 0.0f);
+            _emitterLocation.Init(0.0f, 0.0f, 0.0f, 30.0f, 30.0f, 0.0f, 0.6f, 0.6f, 0.0f);
 
             // Init colors
             setColors();
@@ -60,11 +60,11 @@ namespace AudioVisuals.UI
             // Particle system init
             _particleSystem.AfterParticleInit = ((particle, audioModifier) =>
             {
-                // Which spectrum bar this particle belongs to
+                //// Which spectrum bar this particle belongs to
                 int bandIndex = particle.ParticleId % BandCount;
 
-                // The x offset of this particle
-                float offsetX = bandIndex * (BandThickness + BandSpacing);
+                //// The x offset of this particle
+                //float offsetX = bandIndex * (BandThickness + BandSpacing);
 
                 int color = _colorIndices[0];
 
@@ -77,11 +77,11 @@ namespace AudioVisuals.UI
                 particle.X = _emitterLocation.X + ((_random.Next(200) - 0.0f) / 600.0f);
                 particle.Y = _emitterLocation.Y + ((_random.Next(200) - 0.0f) / 600.0f);
                 particle.Z = (_random.Next(200) - 100.0f) / 400.0f;
-                particle.Size = 0.2f + (_scaledAudioData[bandIndex] * 1.0f);
-                particle.DieRate = ((_random.Next(100)) + 100.0f) / 4000.0f;
+                particle.DieRate = ((_random.Next(100)) + 100.0f) / 8000.0f;
+                particle.Size = 0.2f + (_scaledAudioData[bandIndex] * 2.0f);
                 particle.Slowdown = 0.0f;
                 particle.ChaosModifier = (_random.Next(200)) / 400.0f;
-                particle.SpeedModifier = 0.002f + (audioModifier * 0.1f);
+                particle.SpeedModifier = 0.002f + (audioModifier * 0.1f * 0.0f);
                 //particle.ChaosModifier = 0.5f;
 
                 // Speed
@@ -102,6 +102,10 @@ namespace AudioVisuals.UI
                 //    particle.Life -= particle.DieRate;
                 //    Debug.WriteLine(particle.Y);
                 //}
+
+                // Which spectrum bar this particle belongs to
+                int bandIndex = particle.ParticleId % BandCount;
+                particle.Size = 0.2f + (_scaledAudioData[bandIndex] * 2.0f);
 
                 float timeModifier = _time * 0.02f;
                 vec3 curl1 = _perlinNoise.ComputeCurl(particle.X * 0.2f, particle.Y * 0.2f, timeModifier, CurlEpsilon);
