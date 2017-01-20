@@ -63,37 +63,37 @@ namespace Framework.OGL
             initGradients();
         }
 
-        public vec3 ComputeCurl(float x, float y, float z, float epsilon)
+        public vec3 ComputeCurl(float x, float y, float z, float epsilon, float noiseModifier)
         {
             float n1, n2, a, b;
             vec3 curl = new vec3();
 
-            n1 = Noise(x, y + epsilon, z);
-            n2 = Noise(x, y - epsilon, z);
+            n1 = Noise(x, y + epsilon, z) * noiseModifier;
+            n2 = Noise(x, y - epsilon, z) * noiseModifier;
             a = (n1 - n2) / (2 * epsilon);
 
-            n1 = Noise(x, y, z + epsilon);
-            n2 = Noise(x, y, z - epsilon);
+            n1 = Noise(x, y, z + epsilon) * noiseModifier;
+            n2 = Noise(x, y, z - epsilon) * noiseModifier;
             b = (n1 - n2) / (2 * epsilon);
 
             curl.x = a - b;
 
-            n1 = Noise(x, y, z + epsilon);
-            n2 = Noise(x, y, z - epsilon);
+            n1 = Noise(x, y, z + epsilon) * noiseModifier;
+            n2 = Noise(x, y, z - epsilon) * noiseModifier;
             a = (n1 - n2) / (2 * epsilon);
 
-            n1 = Noise(x + epsilon, y, z);
-            n2 = Noise(x - epsilon, y, z);
+            n1 = Noise(x + epsilon, y, z) * noiseModifier;
+            n2 = Noise(x - epsilon, y, z) * noiseModifier;
             b = (n1 - n2) / (2 * epsilon);
 
             curl.y = a - b;
 
-            n1 = Noise(x + epsilon, y, z);
-            n2 = Noise(x - epsilon, y, z);
+            n1 = Noise(x + epsilon, y, z) * noiseModifier;
+            n2 = Noise(x - epsilon, y, z) * noiseModifier;
             a = (n1 - n2) / (2 * epsilon);
 
-            n1 = Noise(x, y + epsilon, z);
-            n2 = Noise(x, y - epsilon, z);
+            n1 = Noise(x, y + epsilon, z) * noiseModifier;
+            n2 = Noise(x, y - epsilon, z) * noiseModifier;
             b = (n1 - n2) / (2 * epsilon);
 
             curl.z = a - b;

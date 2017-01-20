@@ -56,7 +56,7 @@ namespace AudioVisuals.UI
                     particle.Size = MinParticleSize;
                 }
                 particle.DieRate = ((_random.Next(100)) + 99.0f) / 14000.0f;
-                particle.Slowdown = 0.0f;
+                particle.Drag = 0.0f;
                 particle.Xi = (_random.Next(400) + 360.0f) / 1000.0f;
                 particle.Yi = 0.0f;
                 particle.Zi = 0.0f;
@@ -102,7 +102,7 @@ namespace AudioVisuals.UI
 
                                 // Re-init for next life stage
                                 particle.DieRate = ((_random.Next(100)) + 99.0f) / 1400.0f;
-                                particle.Slowdown = 0.3f;
+                                particle.Drag = 0.3f;
                                 particle.Xi = ((_random.Next(30) - 25.0f) * 2.0f) * audioModifier;
                                 particle.Yi = ((_random.Next(50) - 25.0f) * 2.0f) * audioModifier;
                                 particle.Zi = ((_random.Next(50) - 25.0f) * 2.0f) * audioModifier;
