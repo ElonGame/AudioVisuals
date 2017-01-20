@@ -175,14 +175,7 @@ namespace AudioVisuals.UI
             GlState.Instance.ViewMatrix = mat4.identity();
 
             // Camera
-            GlState.Instance.ViewMatrix = glm.lookAt(GlState.Instance.CameraInfo.GetEyeVec3(), GlState.Instance.CameraInfo.GetCenterVec3(), GlState.Instance.CameraInfo.GetUpVec3());
-
-            // Window width and height used frequently
-            float width = (float)ActualWidth;
-            float height = (float)ActualHeight;
-
-            //// Draw backfiller
-            //_backfiller.Draw(gl, ViewModel.SpectrumData, width, height);            
+            GlState.Instance.ViewMatrix = glm.lookAt(GlState.Instance.CameraInfo.GetEyeVec3(), GlState.Instance.CameraInfo.GetCenterVec3(), GlState.Instance.CameraInfo.GetUpVec3());          
 
             // Default shader
             GlState.Instance.DefaultShader.Use(gl);
@@ -230,19 +223,25 @@ namespace AudioVisuals.UI
             // Particle stars (always draw regardless of effect)
             _particleStars.Draw(gl, 0.0f, 0.0f, 0.0f, ViewModel.AudioData50);
 
-            // Particle blender
+            // Particle glow cube
             if (_activeEffect % EffectCount == 0)
             {
-                if(!GlState.Instance.IsAutoMoveCameraActive)
-                {
-                    GlState.Instance.StartAutoMoveCamera();
-                }
+                _particleBurner.CurlEpsilon = ViewModel.CurlEpsilonf;
+                _particleBurner.NoiseIntensity = ViewModel.NoiseIntensityf;
+                _particleBurner.FixedVelocityModifier = ViewModel.FixedVelocityModifierf;
+                _particleBurner.ParticleChaos = ViewModel.ParticleChaosf;
+                _particleBurner.TimeStep = ViewModel.TimeStepf;
+                _particleBurner.Draw(gl, 0.0f, 0.0f, 0.0f, ViewModel.AudioData1000);
+                //if(!GlState.Instance.IsAutoMoveCameraActive)
+                //{
+                //    GlState.Instance.StartAutoMoveCamera();
+                //}
 
-                GlState.Instance.UpdateAutoMoveCamera();
-                _particleGlowCube.Draw(gl, 0.0f, 0.0f, 0.0f, ViewModel.AudioData200);
+                //GlState.Instance.UpdateAutoMoveCamera();
+                //_particleGlowCube.Draw(gl, 0.0f, 0.0f, 0.0f, ViewModel.AudioData200);
             }
 
-            // Particle glow cube
+            // Particle blender
             if (_activeEffect % EffectCount == 1)
             {
                 float[] audioData200 = ViewModel.AudioData200;
@@ -256,7 +255,7 @@ namespace AudioVisuals.UI
             //GlState.Instance.ModelMatrix = glm.rotate(GlState.Instance.ModelMatrix, glm.radians(180.0f), new vec3(0, 1, 0));
             //_particleLineSpectrum.Draw(gl, -5.0f, -12.0f, 0.0f, ViewModel.AudioData);
 
-            // Particle blender
+            // Particle laser
             if (_activeEffect % EffectCount == 2)
             {
                 float[] audioData50 = ViewModel.AudioData50;
@@ -340,7 +339,7 @@ namespace AudioVisuals.UI
         private void setPerspective(OpenGL gl)
         {
             GlState.Instance.ProjectionMatrix = mat4.identity();
-            GlState.Instance.ProjectionMatrix = glm.perspective(glm.radians(Constants.FovyDegrees), (float)ActualWidth / (float)ActualHeight, 0.1f, 100.0f);
+            GlState.Instance.ProjectionMatrix = glm.perspective(glm.radians(Constants.FovyDegrees), (float)OpenGLSurface.ActualWidth / (float)OpenGLSurface.ActualHeight, 0.1f, 100.0f);
 
             int[] viewport = new int[4];
             gl.GetInteger(OpenGL.GL_VIEWPORT, viewport);

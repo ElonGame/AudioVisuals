@@ -77,12 +77,99 @@ namespace AudioVisuals.UI
             }
         }
 
+        private int _curlEpsilon;
+        public int CurlEpsilon
+        {
+            get { return _curlEpsilon; }
+            set
+            {
+                if (_curlEpsilon != value)
+                {
+                    _curlEpsilon = value;
+                    OnPropertyChanged(() => CurlEpsilonf);
+                }
+            }
+        }
+
+        public float CurlEpsilonf { get { return _curlEpsilon / 100.0f; } }
+
+        private int _noiseIntensity;
+        public int NoiseIntensity
+        {
+            get { return _noiseIntensity; }
+            set
+            {
+                if (_noiseIntensity != value)
+                {
+                    _noiseIntensity = value;
+                    OnPropertyChanged(() => NoiseIntensityf);
+                }
+            }
+        }
+
+        public float NoiseIntensityf { get { return _noiseIntensity / 100.0f; } }
+
+        private int _fixedVelocityModifier;
+        public int FixedVelocityModifier
+        {
+            get { return _fixedVelocityModifier; }
+            set
+            {
+                if (_fixedVelocityModifier != value)
+                {
+                    _fixedVelocityModifier = value;
+                    OnPropertyChanged(() => FixedVelocityModifierf);
+                }
+            }
+        }
+
+        public float FixedVelocityModifierf { get { return _fixedVelocityModifier / 100.0f; } }
+
+        private int _particleChaos;
+        public int ParticleChaos
+        {
+            get { return _particleChaos; }
+            set
+            {
+                if (_particleChaos != value)
+                {
+                    _particleChaos = value;
+                    OnPropertyChanged(() => ParticleChaosf);
+                }
+            }
+        }
+
+        public float ParticleChaosf { get { return _particleChaos / 10000.0f; } }
+
+        private int _timeStep;
+        public int TimeStep
+        {
+            get { return _timeStep; }
+            set
+            {
+                if (_timeStep != value)
+                {
+                    _timeStep = value;
+                    OnPropertyChanged(() => TimeStepf);
+                }
+            }
+        }
+
+        public float TimeStepf { get { return _timeStep / 1000.0f; } }
+
         #endregion
 
         #region Constructor
 
         public MainWindowViewModel()
         {
+            // Set defaults
+            _curlEpsilon = 100;
+            _noiseIntensity = 100;
+            _fixedVelocityModifier = 100;
+            _particleChaos = 100;
+            _timeStep = 100;
+
             // Initialize audio and start listening
             _audio = new RealtimeAudio(receiveAudio);
             _audio.StartListen();

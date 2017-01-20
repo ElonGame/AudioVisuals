@@ -58,6 +58,7 @@
     <Compile Include="Extensions\SharpGlExtensions.cs" />
     <Compile Include="GlBuffer.cs" />
     <Compile Include="Extensions\GlmExtensions.cs" />
+    <Compile Include="PerlinNoise.cs" />
     <Compile Include="Primitives\GlCubeTextured.cs" />
     <Compile Include="Primitives\GlLineSphere.cs" />
     <Compile Include="Primitives\GlQuad.cs" />

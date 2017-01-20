@@ -68,7 +68,7 @@ namespace AudioVisuals.UI
                 particle.Z = (_random.Next(200) - 100.0f) / 400.0f;
                 particle.Size = 0.6f;
                 particle.DieRate = ((_random.Next(30)) + 100.0f) / 800.0f;
-                particle.Slowdown = 0.0f;
+                particle.Drag = 0.0f;
 
                 // Speed
                 particle.Xi = 0.0f;

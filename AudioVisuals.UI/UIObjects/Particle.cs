@@ -13,6 +13,7 @@ namespace AudioVisuals.UI
 
         public float Size { get; set; }
         public float Life { get; set; }
+        public float TimeAlive { get { return 1.0f - Life; } }
         public bool IsAlive { get; set; }
         public bool IsInitialInit { get; set; }
         public float DieRate { get; set; }
@@ -35,10 +36,21 @@ namespace AudioVisuals.UI
         public float Zi { get; set; }
 
         // Speed slowdown all axis
-        public float Slowdown { get; set; }
+        public float Drag { get; set; }
 
-        // Optional speed modifier
-        public float SpeedModifier { get; set; }
+        // Optional lift (up Y)
+        public float Lift { get; set; }
+
+        // Optional fixed velocity
+        public float Xf { get; set; }
+        public float Yf { get; set; }
+        public float Zf { get; set; }
+
+        // Optional fixed velocity modifier
+        public float FixedVelocityModifier { get; set; }
+
+        // Optional chaos
+        public float Chaos { get; set; }
 
         // X/Y/Z Gravity pull
         public float Xg { get; set; }
@@ -53,19 +65,19 @@ namespace AudioVisuals.UI
             LifeStageProgression = 0;
         }
 
-        public void Init(Random random, float speedModifier = 1.0f)
+        public void Init(Random random, float fixedVelocityModifier = 1.0f)
         {
             _random = random;
-            SpeedModifier = speedModifier;
+            FixedVelocityModifier = fixedVelocityModifier;
             SetDefault();
         }
 
         public void Update()
         {
             // Move by speed
-            X += Slowdown > 0 ? Xi / (Slowdown * 1000) : Xi;
-            Y += Slowdown > 0 ? Yi / (Slowdown * 1000) : Yi;
-            Z += Slowdown > 0 ? Zi / (Slowdown * 1000) : Zi;
+            X += Drag > 0 ? Xi / (Drag * 1000) : Xi;
+            Y += Drag > 0 ? Yi / (Drag * 1000) : Yi;
+            Z += Drag > 0 ? Zi / (Drag * 1000) : Zi;
 
             // Add in "pull"
             Xi += Xg;
@@ -97,11 +109,11 @@ namespace AudioVisuals.UI
             Z = 0.0f;
 
             // Set speed
-            Xi = ((_random.Next(50) - 25.0f) * 2.0f) * SpeedModifier;
-            Yi = ((_random.Next(50) - 25.0f) * 2.0f) * SpeedModifier;
-            Zi = ((_random.Next(50) - 25.0f) * 4.0f) * SpeedModifier;
+            Xi = Xf + ((_random.Next(50) - 25.0f) * 2.0f) * FixedVelocityModifier;
+            Yi = Yf + ((_random.Next(50) - 25.0f) * 2.0f) * FixedVelocityModifier;
+            Zi = Zf + ((_random.Next(50) - 25.0f) * 2.0f) * FixedVelocityModifier;
 
-            Slowdown = 0.3f;
+            Drag = 0.3f;
 
             // Pick a color
             int color = _random.Next(Constants.Colors.Length / 3);
