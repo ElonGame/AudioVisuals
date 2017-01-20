@@ -175,14 +175,7 @@ namespace AudioVisuals.UI
             GlState.Instance.ViewMatrix = mat4.identity();
 
             // Camera
-            GlState.Instance.ViewMatrix = glm.lookAt(GlState.Instance.CameraInfo.GetEyeVec3(), GlState.Instance.CameraInfo.GetCenterVec3(), GlState.Instance.CameraInfo.GetUpVec3());
-
-            // Window width and height used frequently
-            float width = (float)ActualWidth;
-            float height = (float)ActualHeight;
-
-            //// Draw backfiller
-            //_backfiller.Draw(gl, ViewModel.SpectrumData, width, height);            
+            GlState.Instance.ViewMatrix = glm.lookAt(GlState.Instance.CameraInfo.GetEyeVec3(), GlState.Instance.CameraInfo.GetCenterVec3(), GlState.Instance.CameraInfo.GetUpVec3());          
 
             // Default shader
             GlState.Instance.DefaultShader.Use(gl);
@@ -233,6 +226,11 @@ namespace AudioVisuals.UI
             // Particle glow cube
             if (_activeEffect % EffectCount == 0)
             {
+                _particleBurner.CurlEpsilon = ViewModel.CurlEpsilonf;
+                _particleBurner.NoiseIntensity = ViewModel.NoiseIntensityf;
+                _particleBurner.FixedVelocityModifier = ViewModel.FixedVelocityModifierf;
+                _particleBurner.ParticleChaos = ViewModel.ParticleChaosf;
+                _particleBurner.TimeStep = ViewModel.TimeStepf;
                 _particleBurner.Draw(gl, 0.0f, 0.0f, 0.0f, ViewModel.AudioData1000);
                 //if(!GlState.Instance.IsAutoMoveCameraActive)
                 //{
@@ -341,7 +339,7 @@ namespace AudioVisuals.UI
         private void setPerspective(OpenGL gl)
         {
             GlState.Instance.ProjectionMatrix = mat4.identity();
-            GlState.Instance.ProjectionMatrix = glm.perspective(glm.radians(Constants.FovyDegrees), (float)ActualWidth / (float)ActualHeight, 0.1f, 100.0f);
+            GlState.Instance.ProjectionMatrix = glm.perspective(glm.radians(Constants.FovyDegrees), (float)OpenGLSurface.ActualWidth / (float)OpenGLSurface.ActualHeight, 0.1f, 100.0f);
 
             int[] viewport = new int[4];
             gl.GetInteger(OpenGL.GL_VIEWPORT, viewport);

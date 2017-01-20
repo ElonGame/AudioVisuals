@@ -41,8 +41,13 @@ namespace AudioVisuals.UI
         // Optional lift (up Y)
         public float Lift { get; set; }
 
-        // Optional speed modifier
-        public float SpeedModifier { get; set; }
+        // Optional fixed velocity
+        public float Xf { get; set; }
+        public float Yf { get; set; }
+        public float Zf { get; set; }
+
+        // Optional fixed velocity modifier
+        public float FixedVelocityModifier { get; set; }
 
         // Optional chaos
         public float Chaos { get; set; }
@@ -60,10 +65,10 @@ namespace AudioVisuals.UI
             LifeStageProgression = 0;
         }
 
-        public void Init(Random random, float speedModifier = 1.0f)
+        public void Init(Random random, float fixedVelocityModifier = 1.0f)
         {
             _random = random;
-            SpeedModifier = speedModifier;
+            FixedVelocityModifier = fixedVelocityModifier;
             SetDefault();
         }
 
@@ -104,9 +109,9 @@ namespace AudioVisuals.UI
             Z = 0.0f;
 
             // Set speed
-            Xi = ((_random.Next(50) - 25.0f) * 2.0f) * SpeedModifier;
-            Yi = ((_random.Next(50) - 25.0f) * 2.0f) * SpeedModifier;
-            Zi = ((_random.Next(50) - 25.0f) * 4.0f) * SpeedModifier;
+            Xi = Xf + ((_random.Next(50) - 25.0f) * 2.0f) * FixedVelocityModifier;
+            Yi = Yf + ((_random.Next(50) - 25.0f) * 2.0f) * FixedVelocityModifier;
+            Zi = Zf + ((_random.Next(50) - 25.0f) * 2.0f) * FixedVelocityModifier;
 
             Drag = 0.3f;
 

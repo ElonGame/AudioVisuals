@@ -24,11 +24,11 @@ namespace AudioVisuals.UI
                 ParticleSystem particleSystem = new ParticleSystem();
                 particleSystem.AfterParticleInit = ((particle, speedModifier) =>
                 {
-                    particle.SpeedModifier = 5.0f;
+                    particle.FixedVelocityModifier = 5.0f;
                     particle.DieRate = ((_random.Next(10)) + 99.0f) / 12000.0f;
-                    particle.Xi *= particle.SpeedModifier;
-                    particle.Yi *= particle.SpeedModifier;
-                    particle.Zi *= particle.SpeedModifier;
+                    particle.Xi *= particle.FixedVelocityModifier;
+                    particle.Yi *= particle.FixedVelocityModifier;
+                    particle.Zi *= particle.FixedVelocityModifier;
                     particle.R = Constants.Colors[color, 0];
                     particle.G = Constants.Colors[color, 1];
                     particle.B = Constants.Colors[color, 2];

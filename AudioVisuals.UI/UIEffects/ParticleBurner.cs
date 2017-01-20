@@ -12,30 +12,37 @@ namespace AudioVisuals.UI
         #region Constants
 
         // Particles
-        private const int ParticleCount = 33000;
+        private const int ParticleCount = 6000;
         private const int BandCount = 400;
         private const float PIPart = ((float)Math.PI / 2.0f) / BandCount;
         private const float BandThickness = 0.1f;
         private const float BandSpacing = 0.0f;
         private const int ColorRotateIntervalMs = 5000;
 
-        // Noise
-        private const float CurlEpsilon = 2.0f;
-        private const float NoiseModifier = 1.0f;
-
         #endregion
 
         #region Private Member Variables
 
         private Random _random = new Random();
-        private PerlinNoise _perlinNoise = new PerlinNoise(75);
+        private PerlinNoise _perlinNoise;
+        private float _time;
         private Stopwatch _colorRotateStopwatch = new Stopwatch();
         private int[] _colorIndices = new int[BandCount];
         private ParticleSystem _particleSystem = new ParticleSystem();
         private float[] _scaledAudioData = new float[BandCount];
         private ObjectLocationInfo _emitterLocation = new ObjectLocationInfo();
-        private int _time;
         private List<vec2> _potentialFieldLocations = new List<vec2>();
+
+        #endregion
+
+        #region Public Noise Properties
+
+        // Noise
+        public float CurlEpsilon { get; set; }
+        public float NoiseIntensity { get; set; }
+        public float FixedVelocityModifier { get; set; }
+        public float ParticleChaos { get; set; }
+        public float TimeStep { get; set; }
 
         #endregion
 
@@ -43,6 +50,7 @@ namespace AudioVisuals.UI
 
         public ParticleBurner()
         {
+            _perlinNoise = new PerlinNoise(_random.Next(100));
             for(float x = -25.0f; x < 25.0f; x += 0.25f)
             {
                 for (float y = -20.0f; y < 20.0f; y += 0.25f)
@@ -82,15 +90,16 @@ namespace AudioVisuals.UI
                 particle.B = Constants.Colors[color, 2];
 
                 // Start location
-                particle.X = _emitterLocation.X + ((_random.Next(200) - 0.0f) / 600.0f);
+                particle.X = _emitterLocation.X + ((_random.Next(200) - 100.0f) / 600.0f);
                 particle.Y = _emitterLocation.Y + ((_random.Next(200) - 0.0f) / 600.0f);
                 particle.Z = (_random.Next(200) - 100.0f) / 400.0f;
                 particle.DieRate = ((_random.Next(100)) + 100.0f) / 4000.0f;
                 particle.Size = 0.2f + (_scaledAudioData[bandIndex] * 2.0f);
+                particle.Chaos = (_random.Next(200) - 100.0f) * ParticleChaos;
                 particle.Drag = 0.0f;
-                particle.Chaos = (_random.Next(200)) / 400.0f;
-                particle.SpeedModifier = 0.004f + (audioModifier * 0.1f * 0.0f);
-                particle.Lift = ((_random.Next(200) + 100.0f) / 800.0f);
+                particle.Xf = (_random.Next(2) - 1) * audioModifier * 1.0f;
+                particle.Yf = (_random.Next(2) - 1) * audioModifier * 1.0f;
+                particle.Lift = ((_random.Next(200) + 100.0f) / 400.0f);
 
                 // Speed
                 particle.Xi = 0.0f;
@@ -113,18 +122,17 @@ namespace AudioVisuals.UI
 
                 float xModifier = 0.4f;
                 float yModifier = 0.4f;
-                float timeModifier = _time * 0.06f;
 
-                if (particle.ParticleId < _potentialFieldLocations.Count)
+                if (particle.ParticleId < 0)
                 {
                     // Put particle in its place
                     vec2 potentialFieldLocation = _potentialFieldLocations[particle.ParticleId];
-                    particle.X = potentialFieldLocation.x * xModifier;
-                    particle.Y = potentialFieldLocation.y * yModifier;
+                    particle.X = potentialFieldLocation.x;
+                    particle.Y = potentialFieldLocation.y;
                     particle.Z = 0.0f;
 
                     // Get noise at location
-                    float noiseValue = _perlinNoise.Noise(particle.X * xModifier, particle.Y * yModifier, timeModifier) * NoiseModifier;
+                    float noiseValue = _perlinNoise.Noise(particle.X * xModifier, particle.Y * yModifier, _time) * NoiseIntensity;
 
                     particle.Size = noiseValue;
                     particle.R = noiseValue;
@@ -135,14 +143,13 @@ namespace AudioVisuals.UI
                 {
                     // Which spectrum bar this particle belongs to
                     int bandIndex = particle.ParticleId % BandCount;
-                    particle.Size = 0.2f + (_scaledAudioData[bandIndex] * 2.0f);
+                    //particle.Size = 0.2f + (_scaledAudioData[bandIndex] * 2.0f);
 
-                    vec3 curl1 = _perlinNoise.ComputeCurl(particle.X * xModifier, particle.Y * yModifier, timeModifier, CurlEpsilon, NoiseModifier);
+                    vec3 curl1 = _perlinNoise.ComputeCurl(particle.X * xModifier, particle.Y * yModifier, _time, CurlEpsilon, NoiseIntensity);
                     //vec3 curl2 = _perlinNoise.ComputeCurl(particle.X * 0.4f, particle.Y * 0.4f, 12.0f + timeModifier, CurlEpsilon);
 
-                    particle.Xi = (particle.SpeedModifier + curl1.x * particle.Chaos) * 4.0f;
-                    particle.Yi = (particle.SpeedModifier + curl1.y * particle.Chaos) * 4.0f;
-                    //particle.Zi = (0.02f + curl.z * particle.ChaosModifier) * particle.TimeAlive * 2.0f;
+                    particle.Xi = (particle.Xf + curl1.x * particle.Chaos) * FixedVelocityModifier;
+                    particle.Yi = (particle.Yf + curl1.y) * FixedVelocityModifier;
                     particle.Zi = 0.0f;
 
                     particle.Yi += particle.Lift;
@@ -162,7 +169,7 @@ namespace AudioVisuals.UI
 
         public void Draw(OpenGL gl, float originX, float originY, float originZ, float[] audioData)
         {
-            _time++;
+            _time += TimeStep;
             float scaledPart = 0.1f; // Go from 0 to PI / 2
             for(int index = 0; index < BandCount; index++)
             {
