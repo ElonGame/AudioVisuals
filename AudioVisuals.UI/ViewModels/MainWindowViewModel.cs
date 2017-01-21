@@ -165,10 +165,10 @@ namespace AudioVisuals.UI
         {
             // Set defaults
             _curlEpsilon = 100;
-            _noiseIntensity = 100;
-            _noiseSampleScale = 150;
+            _noiseIntensity = 200;
+            _noiseSampleScale = 75;
             _fixedVelocityModifier = 0;
-            _particleChaos = 300;
+            _particleChaos = 500;
 
             // Initialize audio and start listening
             _audio = new RealtimeAudio(receiveAudio);

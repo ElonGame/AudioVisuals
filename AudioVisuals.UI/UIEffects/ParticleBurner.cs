@@ -70,7 +70,7 @@ namespace AudioVisuals.UI
         public void Init(OpenGL gl)
         {
             // Init location source
-            _emitterLocation.Init(0.0f, 0.0f, 0.0f, 30.0f, 30.0f, 0.0f, 0.6f, 0.6f, 0.0f);
+            _emitterLocation.Init(0.0f, -15.0f, 0.0f, 30.0f, 30.0f, 0.0f, 0.6f, 0.6f, 0.0f);
 
             // Init colors
             setColors();
@@ -103,9 +103,9 @@ namespace AudioVisuals.UI
                 particle.Size = 0.4f + (audioModifier * 0.2f);
                 particle.Chaos = (_random.Next(200) - 100.0f) * ParticleChaos;
                 particle.Drag = 0.0f;
-                //particle.Lift = ((_random.Next(200) + 100.0f) / 800.0f) + FixedVelocityModifier + (audioModifier * 0.6f);
                 particle.Attribute1 = NoiseIntensity + (audioModifier * 0.4f);
-                particle.Lift = (particle.ParticleId % 2 == 0 ? 1.0f : -1.0f) * (FixedVelocityModifier + (audioModifier * 0.2f));
+                particle.Lift = ((_random.Next(200) + 100.0f) / 800.0f) + FixedVelocityModifier + (audioModifier * 0.2f);
+                //particle.Lift = (particle.ParticleId % 2 == 0 ? 1.0f : -1.0f) * (FixedVelocityModifier + (audioModifier * 0.2f));
 
                 // Speed
                 particle.Xi = 0.0f;
