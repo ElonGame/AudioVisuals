@@ -109,6 +109,22 @@ namespace AudioVisuals.UI
 
         public float NoiseIntensityf { get { return _noiseIntensity / 100.0f; } }
 
+        private int _noiseSampleScale;
+        public int NoiseSampleScale
+        {
+            get { return _noiseSampleScale; }
+            set
+            {
+                if (_noiseSampleScale != value)
+                {
+                    _noiseSampleScale = value;
+                    OnPropertyChanged(() => NoiseSampleScalef);
+                }
+            }
+        }
+
+        public float NoiseSampleScalef { get { return _noiseSampleScale / 1000.0f; } }
+
         private int _fixedVelocityModifier;
         public int FixedVelocityModifier
         {
@@ -141,22 +157,6 @@ namespace AudioVisuals.UI
 
         public float ParticleChaosf { get { return _particleChaos / 10000.0f; } }
 
-        private int _timeStep;
-        public int TimeStep
-        {
-            get { return _timeStep; }
-            set
-            {
-                if (_timeStep != value)
-                {
-                    _timeStep = value;
-                    OnPropertyChanged(() => TimeStepf);
-                }
-            }
-        }
-
-        public float TimeStepf { get { return _timeStep / 1000.0f; } }
-
         #endregion
 
         #region Constructor
@@ -166,9 +166,9 @@ namespace AudioVisuals.UI
             // Set defaults
             _curlEpsilon = 100;
             _noiseIntensity = 100;
-            _fixedVelocityModifier = 100;
-            _particleChaos = 100;
-            _timeStep = 100;
+            _noiseSampleScale = 150;
+            _fixedVelocityModifier = 0;
+            _particleChaos = 300;
 
             // Initialize audio and start listening
             _audio = new RealtimeAudio(receiveAudio);

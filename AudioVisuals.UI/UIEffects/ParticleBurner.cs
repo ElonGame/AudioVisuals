@@ -12,12 +12,15 @@ namespace AudioVisuals.UI
         #region Constants
 
         // Particles
-        private const int ParticleCount = 6000;
-        private const int BandCount = 400;
+        private const int ParticleCount = 4000;
+        private const int BandCount = 50;
         private const float PIPart = ((float)Math.PI / 2.0f) / BandCount;
-        private const float BandThickness = 0.1f;
+        private const float BandThickness = 0.4f;
         private const float BandSpacing = 0.0f;
         private const int ColorRotateIntervalMs = 5000;
+
+        // Noise
+        private const float TimeStep = 0.05f;
 
         #endregion
 
@@ -40,9 +43,9 @@ namespace AudioVisuals.UI
         // Noise
         public float CurlEpsilon { get; set; }
         public float NoiseIntensity { get; set; }
+        public float NoiseSampleScale { get; set; }
         public float FixedVelocityModifier { get; set; }
         public float ParticleChaos { get; set; }
-        public float TimeStep { get; set; }
 
         #endregion
 
@@ -73,14 +76,17 @@ namespace AudioVisuals.UI
             setColors();
             _colorRotateStopwatch.Start();
 
+            float adjustedThickness = BandThickness * 100.0f;
+
             // Particle system init
             _particleSystem.AfterParticleInit = ((particle, audioModifier) =>
             {
-                //// Which spectrum bar this particle belongs to
+                // Which spectrum bar this particle belongs to
                 int bandIndex = particle.ParticleId % BandCount;
 
-                //// The x offset of this particle
-                //float offsetX = bandIndex * (BandThickness + BandSpacing);
+                // The x offset of this particle
+                float offsetX = bandIndex * (BandThickness + BandSpacing);
+                offsetX = 0.0f;
 
                 int color = _colorIndices[0];
 
@@ -90,16 +96,16 @@ namespace AudioVisuals.UI
                 particle.B = Constants.Colors[color, 2];
 
                 // Start location
-                particle.X = _emitterLocation.X + ((_random.Next(200) - 100.0f) / 600.0f);
+                particle.X = offsetX + _emitterLocation.X + ((_random.Next((int)(adjustedThickness * 2.0f)) - adjustedThickness) / adjustedThickness);
                 particle.Y = _emitterLocation.Y + ((_random.Next(200) - 0.0f) / 600.0f);
                 particle.Z = (_random.Next(200) - 100.0f) / 400.0f;
                 particle.DieRate = ((_random.Next(100)) + 100.0f) / 4000.0f;
-                particle.Size = 0.2f + (_scaledAudioData[bandIndex] * 2.0f);
+                particle.Size = 0.4f + (audioModifier * 0.2f);
                 particle.Chaos = (_random.Next(200) - 100.0f) * ParticleChaos;
                 particle.Drag = 0.0f;
-                particle.Xf = (_random.Next(2) - 1) * audioModifier * 1.0f;
-                particle.Yf = (_random.Next(2) - 1) * audioModifier * 1.0f;
-                particle.Lift = ((_random.Next(200) + 100.0f) / 400.0f);
+                //particle.Lift = ((_random.Next(200) + 100.0f) / 800.0f) + FixedVelocityModifier + (audioModifier * 0.6f);
+                particle.Attribute1 = NoiseIntensity + (audioModifier * 0.4f);
+                particle.Lift = (particle.ParticleId % 2 == 0 ? 1.0f : -1.0f) * (FixedVelocityModifier + (audioModifier * 0.2f));
 
                 // Speed
                 particle.Xi = 0.0f;
@@ -108,21 +114,6 @@ namespace AudioVisuals.UI
             });
             _particleSystem.OverrideParticleUpdate = ((particle, audioModifier) =>
             {
-                //if (particle.ParticleId == 1)
-                //{
-                //    particle.Xi = 0.20f;
-                //    particle.Yi = 0.20f;
-                //    // Move by speed
-                //    particle.X += Math.Abs(particle.Xi);
-                //    particle.Y += Math.Abs(particle.Yi);
-                //    particle.Z += Math.Abs(particle.Zi);
-                //    particle.Life -= particle.DieRate;
-                //    Debug.WriteLine(particle.Y);
-                //}
-
-                float xModifier = 0.4f;
-                float yModifier = 0.4f;
-
                 if (particle.ParticleId < 0)
                 {
                     // Put particle in its place
@@ -132,7 +123,7 @@ namespace AudioVisuals.UI
                     particle.Z = 0.0f;
 
                     // Get noise at location
-                    float noiseValue = _perlinNoise.Noise(particle.X * xModifier, particle.Y * yModifier, _time) * NoiseIntensity;
+                    float noiseValue = _perlinNoise.Noise(particle.X * NoiseSampleScale, particle.Y * NoiseSampleScale, _time) * NoiseIntensity;
 
                     particle.Size = noiseValue;
                     particle.R = noiseValue;
@@ -145,11 +136,10 @@ namespace AudioVisuals.UI
                     int bandIndex = particle.ParticleId % BandCount;
                     //particle.Size = 0.2f + (_scaledAudioData[bandIndex] * 2.0f);
 
-                    vec3 curl1 = _perlinNoise.ComputeCurl(particle.X * xModifier, particle.Y * yModifier, _time, CurlEpsilon, NoiseIntensity);
-                    //vec3 curl2 = _perlinNoise.ComputeCurl(particle.X * 0.4f, particle.Y * 0.4f, 12.0f + timeModifier, CurlEpsilon);
+                    vec3 curl1 = _perlinNoise.ComputeCurl(particle.X * NoiseSampleScale, particle.Y * NoiseSampleScale, _time, CurlEpsilon, particle.Attribute1);
 
-                    particle.Xi = (particle.Xf + curl1.x * particle.Chaos) * FixedVelocityModifier;
-                    particle.Yi = (particle.Yf + curl1.y) * FixedVelocityModifier;
+                    particle.Xi = (curl1.x * particle.Chaos);
+                    particle.Yi = (curl1.y * particle.Chaos);
                     particle.Zi = 0.0f;
 
                     particle.Yi += particle.Lift;

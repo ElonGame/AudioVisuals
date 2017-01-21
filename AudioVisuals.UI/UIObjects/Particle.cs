@@ -35,16 +35,16 @@ namespace AudioVisuals.UI
         public float Yi { get; set; }
         public float Zi { get; set; }
 
+        // X/Y/Z Gravity pull
+        public float Xg { get; set; }
+        public float Yg { get; set; }
+        public float Zg { get; set; }
+
         // Speed slowdown all axis
         public float Drag { get; set; }
 
         // Optional lift (up Y)
         public float Lift { get; set; }
-
-        // Optional fixed velocity
-        public float Xf { get; set; }
-        public float Yf { get; set; }
-        public float Zf { get; set; }
 
         // Optional fixed velocity modifier
         public float FixedVelocityModifier { get; set; }
@@ -52,10 +52,8 @@ namespace AudioVisuals.UI
         // Optional chaos
         public float Chaos { get; set; }
 
-        // X/Y/Z Gravity pull
-        public float Xg { get; set; }
-        public float Yg { get; set; }
-        public float Zg { get; set; }
+        // Optional unnamed
+        public float Attribute1 { get; set; }
 
         public Particle(int particleId)
         {
@@ -109,9 +107,9 @@ namespace AudioVisuals.UI
             Z = 0.0f;
 
             // Set speed
-            Xi = Xf + ((_random.Next(50) - 25.0f) * 2.0f) * FixedVelocityModifier;
-            Yi = Yf + ((_random.Next(50) - 25.0f) * 2.0f) * FixedVelocityModifier;
-            Zi = Zf + ((_random.Next(50) - 25.0f) * 2.0f) * FixedVelocityModifier;
+            Xi = ((_random.Next(50) - 25.0f) * 2.0f) * FixedVelocityModifier;
+            Yi = ((_random.Next(50) - 25.0f) * 2.0f) * FixedVelocityModifier;
+            Zi = ((_random.Next(50) - 25.0f) * 2.0f) * FixedVelocityModifier;
 
             Drag = 0.3f;
 

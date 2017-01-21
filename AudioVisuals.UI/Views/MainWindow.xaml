@@ -28,26 +28,26 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" Margin="5">
+        <StackPanel x:Name="ParticleSettingsStackPanel" Grid.Row="0" Grid.Column="0" Orientation="Horizontal" Margin="5">
             <TextBlock Text="Epsilon: " />
             <Slider Minimum="0" Maximum="400" Value="{Binding CurlEpsilon}" Width="100" />
             <TextBlock Text="{Binding CurlEpsilonf}" Margin="0, 0, 10, 0" />
 
             <TextBlock Text="Noise Intensity: " />
-            <Slider Minimum="0" Maximum="200" Value="{Binding NoiseIntensity}" Width="100" />
+            <Slider Minimum="0" Maximum="400" Value="{Binding NoiseIntensity}" Width="100" />
             <TextBlock Text="{Binding NoiseIntensityf}" Margin="0, 0, 10, 0" />
 
+            <TextBlock Text="Noise Sample Scale: " />
+            <Slider Minimum="0" Maximum="600" Value="{Binding NoiseSampleScale}" Width="100" />
+            <TextBlock Text="{Binding NoiseSampleScalef}" Margin="0, 0, 10, 0" />
+            
             <TextBlock Text="Fixed Velocity Modifier: " />
-            <Slider Minimum="0" Maximum="1000" Value="{Binding FixedVelocityModifier}" Width="100" />
+            <Slider Minimum="0" Maximum="200" Value="{Binding FixedVelocityModifier}" Width="100" />
             <TextBlock Text="{Binding FixedVelocityModifierf}" Margin="0, 0, 10, 0" />
 
             <TextBlock Text="Particle Chaos: " />
             <Slider Minimum="0" Maximum="2000" Value="{Binding ParticleChaos}" Width="100" />
             <TextBlock Text="{Binding ParticleChaosf}" Margin="0, 0, 10, 0" />
-
-            <TextBlock Text="Time Step: " />
-            <Slider Minimum="0" Maximum="600" Value="{Binding TimeStep}" Width="100" />
-            <TextBlock Text="{Binding TimeStepf}" Margin="0, 0, 10, 0" />
         </StackPanel>
         <sharpGL:OpenGLControl 
             x:Name="OpenGLSurface"

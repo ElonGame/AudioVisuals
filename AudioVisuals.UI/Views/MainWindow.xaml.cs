@@ -62,6 +62,7 @@ namespace AudioVisuals.UI
                 WindowStyle = WindowStyle.None;
                 WindowState = WindowState.Maximized;
                 ResizeMode = ResizeMode.NoResize;
+                ParticleSettingsStackPanel.Visibility = Visibility.Collapsed;
             }
 
             if(result == MessageBoxResult.Cancel)
@@ -192,9 +193,6 @@ namespace AudioVisuals.UI
             gl.UniformMatrix4(GlState.Instance.DefaultTexturedViewMatrixLocation, 1, false, GlState.Instance.ViewMatrix.to_array());
             gl.UniformMatrix4(GlState.Instance.DefaultTexturedProjectionMatrixLocation, 1, false, GlState.Instance.ProjectionMatrix.to_array());
 
-            // Laser flare
-            //_laserFlare.Draw(gl, 0.0f, 0.0f, -11.0f, _leftParticleLaser.CurrentColor, _rightParticleLaser.CurrentColor, ViewModel.AudioModifier);
-
             // Lightning striker
             //_lightningStriker.Draw(gl, 0.0f, 0.0f, -11.0f, ViewModel.AudioData);
 
@@ -228,10 +226,10 @@ namespace AudioVisuals.UI
             {
                 _particleBurner.CurlEpsilon = ViewModel.CurlEpsilonf;
                 _particleBurner.NoiseIntensity = ViewModel.NoiseIntensityf;
+                _particleBurner.NoiseSampleScale = ViewModel.NoiseSampleScalef;
                 _particleBurner.FixedVelocityModifier = ViewModel.FixedVelocityModifierf;
                 _particleBurner.ParticleChaos = ViewModel.ParticleChaosf;
-                _particleBurner.TimeStep = ViewModel.TimeStepf;
-                _particleBurner.Draw(gl, 0.0f, 0.0f, 0.0f, ViewModel.AudioData1000);
+                _particleBurner.Draw(gl, 0.0f, 0.0f, 0.0f, ViewModel.AudioData50);
                 //if(!GlState.Instance.IsAutoMoveCameraActive)
                 //{
                 //    GlState.Instance.StartAutoMoveCamera();

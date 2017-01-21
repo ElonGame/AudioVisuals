@@ -13,7 +13,7 @@ namespace AudioVisuals.UI
         private const float HalfPi = (float)Math.PI / 2.0f;
         private const float PIPart = HalfPi / BandCount;
         private const float TotalWidth = 100.0f;
-        private const float ExlcusionFromOriginRadius = 32.0f;
+        private const float ExlcusionFromOriginRadius = 35.0f;
 
         #endregion
 
@@ -65,7 +65,7 @@ namespace AudioVisuals.UI
                 }
                 else
                 {
-                    particle.Size = (0.2f + (_scaledAudioData[bandIndex] * 0.3f));
+                    particle.Size = (0.2f + (_scaledAudioData[bandIndex] * 0.0f));
                 }
             });
 
